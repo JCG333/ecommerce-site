@@ -1,0 +1,33 @@
+version: '3.9'
+
+services:
+
+  # API service
+  api:
+    container_name: api
+    build:
+      context: ./app/api
+      dockerfile: Dockerfile
+    image: ...
+    environment:
+      - DB_URL=postgresql://postgres:postgres@db:5432/postgres
+    depends_on:
+      - db
+    ports:
+      - 8000:8000
+
+  # Database service
+  db:
+    container_name: db
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data: {}

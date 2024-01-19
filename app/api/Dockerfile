@@ -2,22 +2,21 @@
 FROM python:3.10-slim
 
 # Set working directory in container
-WORKDIR /app
+WORKDIR /app/api
 
-ENV PYTHONPATH /app
+ENV PYTHONPATH /app/api
 
 # Install Python dependencies
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the current directory contents into the container at /app
-COPY . /app
+COPY . /app/api
 
 # List the contents of the /app directory
-RUN ls /app
+RUN ls /app/api
 
-# Expose a port (vet inte denna: 4000 för dev)
-EXPOSE 4000
-
+# Expose a port 
+EXPOSE 8000
 
 CMD ["python", "api.py"]

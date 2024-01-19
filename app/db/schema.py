@@ -1,74 +1,146 @@
+'''
+This file contains the schema of the database
+'''
 from flask_sqlalchemy import SQLAlchemy 
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
+from datetime import datetime
 
 db = SQLAlchemy()
 
+'''
+Table that stores the user information
+attributes:
+    name: name of the user
+    email: email of the user
+    password: password of the user
+    admin: boolean value that indicates if the user is an admin or not
+'''
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(32))
+    name = db.Column(db.String(32))
     email = db.Column(db.String(64), unique=True)
     password = db.Column(db.String(64))
     admin = db.Column(db.Boolean)
 
-    def __init__(self, username, email, password, admin):
+    def __init__(self, name, email, password, admin):
         self.admin = admin
-        self.username = username
+        self.name = name
         self.email = email
         self.password = password
 
+'''
+Table that stores the category information
+attributes:
+    category_name: name of the category
+    parent_category_id: parent category id of the category
+'''
 class Category(db.Model):
     __tablename__ = 'category'
     id = db.Column(db.Integer, primary_key=True)
     category_name = db.Column(db.String(32))
 
+    parent_category_id = db.Column(db.Integer, ForeignKey('category.id'))
+
     def __init__(self, category_name):
         self.category_name = category_name
 
-class Products(db.Model):
+'''
+Table that stores the product information
+
+attributes:
+    name: name of the product
+    price: price of the product
+    description: description of the product
+    image: image of the product
+    quantity: quantity of the product
+    category_id: category id of the product
+'''
+class Product(db.Model):
     __tablename__ = 'products'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32))
     price = db.Column(db.Float)
     description = db.Column(db.String(64))
     image = db.Column(db.String(64))
-    category = db.Column(db.Integer, ForeignKey('category.id'))
+    quantity = db.Column(db.Integer)
 
-    def __init__(self, name, price, description, image, category):
+    category_id = db.Column(db.Integer, ForeignKey('category.id'))
+
+    def __init__(self, name, price, description, image, quantity):
         self.name = name
         self.price = price
         self.description = description
         self.image = image
-        self.category = category
+        self.quantity = quantity
 
-class Cart(db.Model):
-    __tablename__ = 'cart'
+'''
+Table that stores the review information
+attributes:
+    user_id: user id of the user
+    product_id: product id of the product
+    rating: rating of the product
+    comment: comment of the product
+    created_at: date of the review
+'''
+class Review(db.Model):
+            __tablename__ = 'reviews'
+            id = db.Column(db.Integer, primary_key=True)
+            user_id = db.Column(db.Integer, ForeignKey('users.id'))
+            product_id = db.Column(db.Integer, ForeignKey('products.id'))
+            rating = db.Column(db.Integer)
+            comment = db.Column(db.String(256))
+            created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+            user = relationship('User', backref='reviews')
+            product = relationship('Product', backref='reviews')
+
+            def __init__(self, user_id, product_id, rating, comment):
+                self.user_id = user_id
+                self.product_id = product_id
+                self.rating = rating
+                self.comment = comment
+
+'''
+Table that stores the order information
+attributes:
+    order_date: date of the order
+    shipping_address: shipping address of the order
+    user_id: user id of the user
+'''
+class Order(db.Model):
+    __tablename__ = 'orders'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, ForeignKey('users.id'))
-    product_id = db.Column(db.Integer, ForeignKey('products.id'))
+    order_date = db.Column(db.DateTime, default=datetime.utcnow)
+    shipping_address = db.Column(db.String(64))
 
-    user = relationship('User', backref='carts')
-    product = relationship('Products', backref='carts')
+    user_id = db.Column(db.Integer, ForeignKey('users.id'))
+
+    user = relationship('User', backref='orders')
 
     def __init__(self, user_id, product_id):
         self.user_id = user_id
         self.product_id = product_id
 
-class Orders(db.Model):
-    __tablename__ = 'orders'
+'''
+Table that stores the order item information
+attributes:
+    product_id: product id of the product
+    order_id: order id of the order
+    quantity: quantity of the product
+'''
+class Order_item(db.Model):
+    __tablename__ = 'order_items'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, ForeignKey('users.id'))
     product_id = db.Column(db.Integer, ForeignKey('products.id'))
+    order_id = db.Column(db.Integer, ForeignKey('orders.id'))
     quantity = db.Column(db.Integer)
-    total_price = db.Column(db.Float)
 
-    user = relationship('User', backref='orders')
-    product = relationship('Products', backref='orders')
+    product = relationship('Products', backref='order_items')
+    order = relationship('Orders', backref='order_items')
 
-    def __init__(self, user_id, product_id, quantity, total_price):
-        self.user_id = user_id
+    def __init__(self, product_id, quantity):
         self.product_id = product_id
         self.quantity = quantity
-        self.total_price = total_price
 
