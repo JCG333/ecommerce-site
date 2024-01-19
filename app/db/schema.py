@@ -85,22 +85,22 @@ attributes:
     created_at: date of the review
 '''
 class Review(db.Model):
-            __tablename__ = 'reviews'
-            id = db.Column(db.Integer, primary_key=True)
-            user_id = db.Column(db.Integer, ForeignKey('users.id'))
-            product_id = db.Column(db.Integer, ForeignKey('products.id'))
-            rating = db.Column(db.Integer)
-            comment = db.Column(db.String(256))
-            created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    __tablename__ = 'reviews'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, ForeignKey('users.id'))
+    product_id = db.Column(db.Integer, ForeignKey('products.id'))
+    rating = db.Column(db.Integer)
+    comment = db.Column(db.String(256))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-            user = relationship('User', backref='reviews')
-            product = relationship('Product', backref='reviews')
+    user = relationship('User', backref='reviews')
+    product = relationship('Product', backref='reviews')
 
-            def __init__(self, user_id, product_id, rating, comment):
-                self.user_id = user_id
-                self.product_id = product_id
-                self.rating = rating
-                self.comment = comment
+    def __init__(self, user_id, product_id, rating, comment):
+        self.user_id = user_id
+        self.product_id = product_id
+        self.rating = rating
+        self.comment = comment
 
 '''
 Table that stores the order information
