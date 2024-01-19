@@ -1,6 +1,3 @@
--- Creates database
-CREATE DATABASE db
-
 -- Table that stores the user information
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
@@ -36,7 +33,8 @@ CREATE TABLE reviews (
     rating INTEGER NOT NULL,
     comment VARCHAR(256),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id, product_id) REFERENCES users(id, products(id))
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (product_id) REFERENCES products(id)
 );
 
 -- Table that stores the order information
@@ -53,5 +51,6 @@ CREATE TABLE order_items (
     product_id INTEGER REFERENCES products(id) NOT NULL,
     order_id INTEGER REFERENCES orders(id) NOT NULL,
     quantity INTEGER NOT NULL,
-    FOREIGN KEY (product_id, order_id) REFERENCES products(id, orders(id))
+    FOREIGN KEY (product_id) REFERENCES products(id),
+    FOREIGN KEY (order_id) REFERENCES orders(id)
 );
