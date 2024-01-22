@@ -11,6 +11,20 @@ def create_tables():
         db.init_app(app)
         db.create_all()
 
+        try:
+            category1 = Category(category_name ='T-Shirts', parent_category_id = None)
+            db.session.add(category1)
+            db.session.commit()
+
+            product1 = Product(name ='T-Shirt', price =10.00, description ='This is a T-Shirt', image ='tshirt.jpg', quantity =10, category_id=category1.id)
+            db.session.add(product1)
+            db.session.commit()
+
+            print('Default entries added successfully')
+        
+        except Exception as e:
+            print('Didnt work')
+
 create_tables()
 
 '''Return the home page'''

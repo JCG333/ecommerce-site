@@ -39,12 +39,13 @@ attributes:
 class Category(db.Model):
     __tablename__ = 'category'
     id = db.Column(db.Integer, primary_key=True)
-    category_name = db.Column(db.String(32))
+    category_name = db.Column(db.String(32), unique=True)
 
     parent_category_id = db.Column(db.Integer, ForeignKey('category.id'))
 
-    def __init__(self, category_name):
+    def __init__(self, category_name, parent_category_id):
         self.category_name = category_name
+        self.parent_category_id = parent_category_id
 
 '''
 Table that stores the product information
@@ -68,12 +69,13 @@ class Product(db.Model):
 
     category_id = db.Column(db.Integer, ForeignKey('category.id'))
 
-    def __init__(self, name, price, description, image, quantity):
+    def __init__(self, name, price, description, image, quantity, category_id):
         self.name = name
         self.price = price
         self.description = description
         self.image = image
         self.quantity = quantity
+        self.category_id = category_id
 
 '''
 Table that stores the review information
@@ -93,8 +95,8 @@ class Review(db.Model):
     comment = db.Column(db.String(256))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    user = relationship('User', backref='reviews')
-    product = relationship('Product', backref='reviews')
+    user = relationship('User', backref='Review')
+    product = relationship('Product', backref='Review')
 
     def __init__(self, user_id, product_id, rating, comment):
         self.user_id = user_id
@@ -117,7 +119,7 @@ class Order(db.Model):
 
     user_id = db.Column(db.Integer, ForeignKey('users.id'))
 
-    user = relationship('User', backref='orders')
+    user = relationship('User', backref='Order')
 
     def __init__(self, user_id, product_id):
         self.user_id = user_id
@@ -137,8 +139,8 @@ class Order_item(db.Model):
     order_id = db.Column(db.Integer, ForeignKey('orders.id'))
     quantity = db.Column(db.Integer)
 
-    product = relationship('Products', backref='order_items')
-    order = relationship('Orders', backref='order_items')
+    product = relationship('Product', backref='Order_item')
+    order = relationship('Order', backref='Order_item')
 
     def __init__(self, product_id, quantity):
         self.product_id = product_id
