@@ -1,7 +1,17 @@
 from flask import Flask, abort
-from db.schema import db, User, Category, Products, Cart, orders
+from os import environ
+from db.schema import db, User, Category, Product, Order, Order_item
 
 app = Flask(__name__)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DB_URL') 
+
+def create_tables():
+    with app.app_context():
+        db.init_app(app)
+        db.create_all()
+
+create_tables()
 
 '''Return the home page'''
 @app.route('/')

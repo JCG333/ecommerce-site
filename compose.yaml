@@ -4,11 +4,11 @@ services:
 
   # API service
   api:
-    container_name: api
+    container_name: api_d0018e
     build:
-      context: ./app/api
+      context: ./app #./app/api
       dockerfile: Dockerfile
-    image: ...
+    image: justingav/d0018e:latest
     environment:
       - DB_URL=postgresql://postgres:postgres@db:5432/postgres
     depends_on:
@@ -18,7 +18,7 @@ services:
 
   # Database service
   db:
-    container_name: db
+    container_name: db_d0018e
     image: postgres:latest
     environment:
       - POSTGRES_USER=postgres
