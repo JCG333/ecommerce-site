@@ -1,4 +1,4 @@
-from flask import Flask, abort
+from flask import Flask, abort, request
 from os import environ
 from db.schema import db, User, Category, Product, Order, Order_item
 
@@ -23,14 +23,18 @@ def create_tables():
             print('Default entries added successfully')
         
         except Exception as e:
-            print('Didnt work')
+            print('Didnt work', e)
 
 create_tables()
 
 '''Return the home page'''
+
+
+
+
 @app.route('/')
 def Home():
-    return 'Home Page'
+    return 'Home Page test'
 
 '''Return the all products page'''
 @app.route('/products')
@@ -39,10 +43,10 @@ def Products():
 
 '''Return a specific product page'''
 @app.route('/products/<int:id>')
-def Product(id):
-    product = Products.query.get(id)
+def Specific_Product(id):
+    product = Product.query.filter_by(id=id).first()
     if product is None:
-        abort(404)  # Not found
+        return "Product not found"
     return 'Specific Product Page'
 
 '''Return the cart page'''
@@ -66,10 +70,19 @@ def Login():
     return 'Login Page'
 
 '''Return the register page'''
-@app.route('/register')
+@app.route('/register', methods=['GET', 'POST'])
 def Register():
-    return 'Register Page'
-
+    if not all(key in request.form for key in ('username', 'email', 'password')):
+        return "Not all parameters provided" #abort(400)
+    user = User(
+        username=request.form["username"],
+        email=request.form["email"],
+        password=request.form["password"],
+        admin=False
+    )
+    db.session.add(user)
+    db.session.commit()
+    return 'User registered'
 '''Return your account page'''
 @app.route('/myaccount/<int:id>')
 def MyAccount(id):
@@ -87,4 +100,4 @@ def Admin():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
