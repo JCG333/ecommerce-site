@@ -73,6 +73,22 @@ def Specific_category(id):
 '''Return the login page'''
 @app.route('/login', methods=['GET', 'POST'])
 def Login():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        # Validate the inputs (you can add more validation if needed)
+        if not email or not password:
+            flash('Please enter all the fields', 'error')
+        else:
+            # Check if the user exists in the database
+            user = User.query.filter_by(email=email).first()
+
+            if user:
+                # Validate Password
+                if user.password == password:
+                    flash('Successfully logged in', 'success')
+                    return redirect(url_for('Home'))
     return render_template("login.html")
 
 '''Return the register page'''
