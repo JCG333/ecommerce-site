@@ -1,10 +1,12 @@
-from flask import Flask, abort, request
+from flask import Flask, abort, flash, redirect, render_template, request, url_for
 from os import environ
 from db.schema import db, User, Category, Product, Order, Order_item
+
 
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DB_URL') 
+app.secret_key = 'D0018E' # så att flash fungerar
 
 def create_tables():
     with app.app_context():
@@ -47,7 +49,7 @@ def Specific_Product(id):
     product = Product.query.filter_by(id=id).first()
     if product is None:
         return "Product not found"
-    return 'Specific Product Page'
+    return render_template("show_product.html", product=product)
 
 '''Return the cart page'''
 @app.route('/cart')
@@ -57,32 +59,51 @@ def Cart():
 '''Return the all categories page'''
 @app.route('/categories')
 def Categories():
-    return 'All Categories page'
+    categories = Category.query.all()
+    return render_template("categories.html", categories=categories)
 
 '''Return the specific category Page'''
 @app.route('/categories/<int:id>')
-def Category(id):
-    return 'Specific Category Page'
+def Specific_category(id):
+    category = Category.query.filter_by(id=id).first()
+    if Category is None:
+        return "Category not found"
+    return render_template("show_category.html", category=category)
 
 '''Return the login page'''
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def Login():
-    return 'Login Page'
+    return render_template("login.html")
 
 '''Return the register page'''
 @app.route('/register', methods=['GET', 'POST'])
-def Register():
-    if not all(key in request.form for key in ('username', 'email', 'password')):
-        return "Not all parameters provided" #abort(400)
-    user = User(
-        username=request.form["username"],
-        email=request.form["email"],
-        password=request.form["password"],
-        admin=False
-    )
-    db.session.add(user)
-    db.session.commit()
-    return 'User registered'
+def register():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        # Validate the inputs (you can add more validation if needed)
+        if not name or not email or not password:
+            flash('Please enter all the fields', 'error')
+        elif User.query.filter_by(name=name).first():
+            flash('Name already exists', 'error')
+        elif User.query.filter_by(email=email).first():
+            flash('Email already exists', 'error')
+        else:
+
+
+            # Create a new user and add them to the database
+            user = User(name=name, email=email, password=password, admin=False)
+            db.session.add(user)
+            db.session.commit()
+
+            flash('Successfully registered', 'success')
+            return redirect(url_for('Login'))  # Redirect to the login page
+
+    else:
+        return render_template("register.html")
+
 '''Return your account page'''
 @app.route('/myaccount/<int:id>')
 def MyAccount(id):
