@@ -1,11 +1,27 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Product Details</title>
+    <title>{{product.name}}</title>
+    <!-- Link to the CSS file -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='CSS/show_product.css') }}">
+    <!-- Link to the JavaScript file -->
+    <script src="{{ url_for('static', filename='JS/show_product.js') }}" defer></script>
 </head>
+
 <body>
-    <h1>{{ product.name }}</h1>
-    <p>Price: {{ product.price }}</p>
-    <p>Description: {{ product.description }}</p>
+    <div class="product-container">
+        <img class="product-image" src="{{ url_for('static', filename=product.image) }}" alt="{{product.name}}">
+        <div class="product-details">
+            <h1>{{product.name}}</h1>
+            <p>{{product.description}}</p>
+            <p>Price: {{product.price}} SEK </p>
+            <form id="add-to-cart-form">
+                <label for="quantity">Quantity:</label>
+                <input type="number" id="quantity" name="quantity" min="1" max="{{product.quantity}}" value="1">
+                <button id="create_orderItem_button" type="submit" data-id="{{product.id}}">Add to Cart</button>
+            </form>
+        </div>
+        <div id=" orderItem_creation_action_response"></div>
+    </div>
 </body>
-</html>

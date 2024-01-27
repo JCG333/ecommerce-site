@@ -13,8 +13,10 @@ services:
       - DB_URL=postgresql://postgres:postgres@db:5432/postgres
     depends_on:
       - db
+    volumes:
+      - ./app:/app
     ports:
-      - 5000:5000
+      - 4000:4000
 
   # Database service
   db:

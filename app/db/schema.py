@@ -142,7 +142,8 @@ class Order_item(db.Model):
     product = relationship('Product', backref='Order_item')
     order = relationship('Order', backref='Order_item')
 
-    def __init__(self, product_id, quantity):
+    def __init__(self, product_id, quantity, order_id):
         self.product_id = product_id
         self.quantity = quantity
+        self.order_id = order_id
 

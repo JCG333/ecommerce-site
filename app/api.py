@@ -1,4 +1,4 @@
-from flask import Flask, abort, flash, redirect, render_template, request, url_for
+from flask import Flask, abort, flash, redirect, render_template, request, url_for, jsonify, make_response
 from os import environ
 from db.schema import db, User, Category, Product, Order, Order_item
 
@@ -18,7 +18,7 @@ def create_tables():
             db.session.add(category1)
             db.session.commit()
 
-            product1 = Product(name ='T-Shirt', price =10.00, description ='This is a T-Shirt', image ='tshirt.jpg', quantity =10, category_id=category1.id)
+            product1 = Product(name ='T-Shirt', price =10.00, description ='This is a T-Shirt', image ='images/t-shirts/shrek_t-shirts_1.png', quantity =10, category_id=category1.id)
             db.session.add(product1)
             db.session.commit()
 
@@ -29,11 +29,29 @@ def create_tables():
 
 create_tables()
 
+#NOT DONE!!
+# Create a new order item [TODO: check if there exists an order for the user otherwise created one]
+@app.route('/create_orderItem', methods=['POST'])
+def create_orderItem():
+    product_id = request.form.get('product_id')
+    quantity = request.form.get('quantity')
+    order_id = request.form.get('order_id')
+
+    #check if the order exists
+    order = Order.query.filter_by(id=order_id).first()
+    if order is None:
+        return make_response(jsonify({'message': 'order not found'}), 404)
+
+    # add product to order
+    try:
+        order_item = Order_item(product_id=product_id, quantity=quantity, order_id=order_id)
+        db.session.add(order_item)
+        db.session.commit()
+        return make_response(jsonify({'message': 'order item created'}), 201)
+    except Exception as e:
+        return make_response(jsonify({'message': 'error creating order item', 'error': str(e)}), 500)
+
 '''Return the home page'''
-
-
-
-
 @app.route('/')
 def Home():
     return 'Home Page test'
@@ -137,4 +155,4 @@ def Admin():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=4000, debug=True)
