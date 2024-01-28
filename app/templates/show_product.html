@@ -9,19 +9,47 @@
     <script src="{{ url_for('static', filename='JS/show_product.js') }}" defer></script>
 </head>
 
+<header>
+    <a href="#" id="logo"><img src="{{ url_for('static', filename='images/admin/home_icon.png') }}" alt="Logo"></a>
+    <input type="search" id="search" placeholder="Search...">
+    <span id="user-name"></span> <!-- Placeholder for the user's name -->
+
+    <!-- Login -->
+    <div class="dropdown">
+        <a href="#" id="account-icon"><img src="{{ url_for('static', filename='images/admin/account_icon.png') }}"
+                alt="Account"></a>
+        <div id="loginDropdown" class="dropdown-content">
+            <form id="loginForm">
+                <label for="email">Email:</label>
+                <br>
+                <input type="email" id="email" name="email" required>
+                <label for="password">Password:</label>
+                <br>
+                <input type="password" id="password" name="password" required>
+                <input id="login_button" type="submit" value="Login">
+                <input id="register_button" type="button" value="Register">
+            </form>
+        </div>
+    </div>
+</header>
+
 <body>
-    <div class="product-container">
+    <div class="product-container" data-product-id="{{product.id}}">
         <img class="product-image" src="{{ url_for('static', filename=product.image) }}" alt="{{product.name}}">
         <div class="product-details">
             <h1>{{product.name}}</h1>
             <p>{{product.description}}</p>
-            <p>Price: {{product.price}} SEK </p>
+            <p id="price_tag">{{product.price}} SEK </p>
             <form id="add-to-cart-form">
-                <label for="quantity">Quantity:</label>
+                <!-- <label for="quantity">Quantity:</label> -->
                 <input type="number" id="quantity" name="quantity" min="1" max="{{product.quantity}}" value="1">
                 <button id="create_orderItem_button" type="submit" data-id="{{product.id}}">Add to Cart</button>
             </form>
         </div>
-        <div id=" orderItem_creation_action_response"></div>
+        <div id="orderItem_creation_action_response"></div>
     </div>
 </body>
+
+<footer>
+    <p>© 2022 Shreek shop. All rights reserved.</p>
+</footer>

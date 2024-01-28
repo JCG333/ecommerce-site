@@ -1,20 +1,25 @@
+/* ========== GENERAL ========= */
 body {
-    margin: 0 auto;
-    max-width: 600px;
-    /* Adjust as needed */
-    padding: 0 20px;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #ffffff;
 }
 
+/* ========== PRODUCT PAGE ========= */
 .product-container {
     display: flex;
     align-items: start;
     justify-content: center;
     gap: 20px;
+    padding-top: 100px;
+    padding-left: 30%;
 }
 
 .product-image {
-    width: 300px;
-    /* Adjust as needed */
+    width: 450px;
     height: auto;
 }
 
@@ -23,34 +28,164 @@ body {
 }
 
 .product-details h1 {
-    font-size: 1.5em;
-    /* Adjust as needed */
+    font-size: 2em;
 }
 
 .product-details p {
     font-size: 1em;
-    /* Adjust as needed */
 }
+
+#price_tag {
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+/* ==== INPUT FORM (ADD TO CART) ==== */
 
 #add-to-cart-form {
     font-size: 0.9em;
-    /* Adjust as needed */
-}
-
-#add-to-cart-form {
-    font-size: 0.9em;
-    /* Adjust as needed */
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
 #add-to-cart-form input {
-    max-width: 50px;
-    /* Adjust as needed */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
 }
+
+#add-to-cart-form input {
+    max-width: 50px;
+}
+
+/* ==== BUTTON (ADD TO CART) ==== */
 
 #add-to-cart-form button {
     max-width: 100px;
-    /* Adjust as needed */
+    background-color: #3f3f3f;
+    border: 0px solid #ddd;
+    color: white;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+#add-to-cart-form button:hover {
+    background-color: #2a2a2a;
+}
+
+
+/* ========== OBJECT THAT EXIST ON MOSTLY ALL PAGES ========= */
+
+/* ========== NAVBAR ========= */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+    padding: 5px 0px 10px 10px;
+    background-color: #f5f2ee;
+    border-bottom: 0px solid #f4f4f4;
+    width: 100%;
+}
+
+
+#logo img {
+    height: 55px;
+}
+
+#account-icon img {
+    height: 40px;
+    padding-right: 40px;
+}
+
+#search {
+    flex-grow: 2;
+    max-width: 25%;
+    margin: auto;
+    max-height: 90%;
+    padding: 10px;
+    border: 2.5px solid #545454;
+    border-radius: 20px;
+}
+
+#search::placeholder {
+    color: #3c3a3a;
+    font-size: medium;
+}
+
+/*==== login form ====*/
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #f5f2ee;
+    min-width: 200px;
+    margin-top: 20px;
+    padding: 12px 16px;
+    z-index: 1;
+}
+
+#login_button,
+#register_button {
+    width: 80px;
+    background-color: #3f3f3f;
+    border: 0px solid #ddd;
+    color: white;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 1em;
+    margin-top: 10px;
+}
+
+#register_button {
+    margin-left: 15%;
+}
+
+#login_button:hover,
+#register_button:hover {
+    background-color: #2a2a2a;
+}
+
+#password,
+#email {
+    border: 2.5px solid #545454;
+    border-radius: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    width: 90%;
+}
+
+/* ==== user name style ==== */
+#user-name {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+/* ========== FOOTER ========= */
+footer {
+    background-color: #f5f2ee;
+    color: #333;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+footer p {
+    margin: 0;
 }
