@@ -76,6 +76,30 @@ document.getElementById('register_button').addEventListener('click', function ()
     register_redirect();
 });
 
+// =================== logout ===================
+function logout_redirect() {
+    fetch('/logout')
+        // check if response is OK
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(error => Promise.reject(error));
+            }
+            return response.json();
+        })
+        // if OK
+        .then(data => {
+            document.getElementById('orderItem_creation_action_response').textContent = 'logout success!';
+            document.getElementById('user-name').textContent = '';
+        })
+        // Error handling
+        .catch(error => {
+            document.getElementById('orderItem_creation_action_response').textContent = error.message;
+        });
+}
+// event lisenter for logo redirect
+document.getElementById('logout-link').addEventListener('click', function () {
+    logout_redirect();
+});
 
 // ===================== login form LOGIN ========================
 
@@ -139,16 +163,6 @@ document.getElementById('loginForm').addEventListener('click', function (event) 
     event.stopPropagation(); // Stop the click event from bubbling up to parent elements
 });
 
-window.onload = function () {
-    fetch('/get_username')
-        .then(response => response.json())
-        .then(data => {
-            if (data.username) {
-                document.getElementById('user-name').textContent = data.username; // Display the user's name
-            }
-        });
-};
-
 // =================== categories =====================
 
 function redirect_categories(category_name) {
@@ -162,3 +176,16 @@ categoriesList.addEventListener('click', function (event) {
         redirect_categories(target.textContent);
     }
 });
+
+window.onload = function () {
+    fetch('/get_username')
+        .then(response => response.json())
+        .then(data => {
+            if (data.username) {
+                document.getElementById('user-name').textContent = data.username; // Display the user's name
+            }
+            else {
+                document.getElementById('user-name').textContent = ''; // Display nothing
+            }
+        });
+};

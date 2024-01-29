@@ -210,7 +210,8 @@ header {
     width: 90%;
 }
 
-#account-link {
+#account-link,
+#logout-link {
     display: block;
     color: black;
     text-align: center;
@@ -218,7 +219,8 @@ header {
     text-decoration: none;
 }
 
-#account-link:hover {
+#account-link:hover,
+#logout-link:hover {
     text-decoration: underline;
 }
 
@@ -228,6 +230,8 @@ header {
     font-weight: bold;
     margin-right: 10px;
     margin-bottom: 40px;
+    min-width: 100px;
+    text-align: right;
 }
 
 /* ========== FOOTER ========= */

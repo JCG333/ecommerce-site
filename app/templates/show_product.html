@@ -9,6 +9,8 @@
     <script src="{{ url_for('static', filename='JS/show_product.js') }}" defer></script>
 </head>
 
+<!--- UNIVERSAL -->
+
 <!-- The header contains the logo, search bar, user name, login form and cart -->
 <header>
     <!-- Logo -->
@@ -55,13 +57,16 @@
                 <input id="login_button" type="submit" value="Login">
                 <input id="register_button" type="button" value="Register">
             </form>
-            <a id="account-link" href="#">Account</a>
+            <a id="account-link" href="#">My account</a>
+            <a id="logout-link" href="#">Logout</a>
         </div>
     </div>
 
     <!-- cart icon -->
     <a href="#" id="cart"><img src="{{ url_for('static', filename='images/admin/cart_icon.png') }}" alt="Cart"></a>
 </header>
+
+<!-- PRODUCT SPECIFIC -->
 
 <!-- the product container contains the product image, name, description, price, quantity and add to cart button -->
 
@@ -84,6 +89,8 @@
         <div id="orderItem_creation_action_response"></div>
     </div>
 </body>
+
+<!--- UNIVERSAL -->
 
 <!-- The footer contains the copy right text -->
 <footer>

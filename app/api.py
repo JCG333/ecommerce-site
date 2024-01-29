@@ -190,6 +190,15 @@ def Checkout():
 def Admin():
     return 'Admin Page'
 
+'''Logout the user'''
+@app.route('/logout', methods=['GET'])
+def Logout():
+    try:
+        session.clear()
+        return make_response(jsonify({'message': 'Successfully logged out'}), 200)
+    except Exception as e:
+        return make_response(jsonify({'message': 'Error logging out', 'error': str(e)}), 500)
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=4000, debug=True)
