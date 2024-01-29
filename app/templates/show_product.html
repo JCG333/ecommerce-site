@@ -9,15 +9,41 @@
     <script src="{{ url_for('static', filename='JS/show_product.js') }}" defer></script>
 </head>
 
+<!-- The header contains the logo, search bar, user name, login form and cart -->
 <header>
+    <!-- Logo -->
     <a href="#" id="logo"><img src="{{ url_for('static', filename='images/admin/home_icon.png') }}" alt="Logo"></a>
-    <input type="search" id="search" placeholder="Search...">
-    <span id="user-name"></span> <!-- Placeholder for the user's name -->
+
+    <!-- Navigation items-->
+    <div id="navigation">
+        <!-- Search bar -->
+        <input type="search" id="search" placeholder="Search...">
+
+        <!-- Categories -->
+        <nav>
+            <ul id="categoriesList">
+                <li><a href="#">T-Shirts</a></li>
+                <li><a href="#">Pants</a></li>
+                <li><a href="#">Shoes</a></li>
+                <li><a href="#">Socks</a></li>
+                <li><a href="#">Toys</a></li>
+                <li><a href="#">Music</a></li>
+                <li><a href="#">Misc</a></li>
+            </ul>
+        </nav>
+    </div>
 
     <!-- Login -->
+
+    <!-- Users name -->
+    <span id="user-name"></span> <!-- Placeholder for the user's name -->
+
+    <!-- Login dropdown -->
     <div class="dropdown">
+        <!-- login icon -->
         <a href="#" id="account-icon"><img src="{{ url_for('static', filename='images/admin/account_icon.png') }}"
                 alt="Account"></a>
+        <!-- dropdown -->
         <div id="loginDropdown" class="dropdown-content">
             <form id="loginForm">
                 <label for="email">Email:</label>
@@ -29,13 +55,21 @@
                 <input id="login_button" type="submit" value="Login">
                 <input id="register_button" type="button" value="Register">
             </form>
+            <a id="account-link" href="#">Account</a>
         </div>
     </div>
+
+    <!-- cart icon -->
+    <a href="#" id="cart"><img src="{{ url_for('static', filename='images/admin/cart_icon.png') }}" alt="Cart"></a>
 </header>
+
+<!-- the product container contains the product image, name, description, price, quantity and add to cart button -->
 
 <body>
     <div class="product-container" data-product-id="{{product.id}}">
+        <!-- product image -->
         <img class="product-image" src="{{ url_for('static', filename=product.image) }}" alt="{{product.name}}">
+        <!-- product info -->
         <div class="product-details">
             <h1>{{product.name}}</h1>
             <p>{{product.description}}</p>
@@ -46,10 +80,12 @@
                 <button id="create_orderItem_button" type="submit" data-id="{{product.id}}">Add to Cart</button>
             </form>
         </div>
+        <!-- http response output window -->
         <div id="orderItem_creation_action_response"></div>
     </div>
 </body>
 
+<!-- The footer contains the copy right text -->
 <footer>
     <p>© 2022 Shreek shop. All rights reserved.</p>
 </footer>

@@ -1,12 +1,5 @@
 // =============== add item to cart =================
 
-// event lisenter for creating orderItem button
-document.getElementById('add-to-cart-form').addEventListener('submit', function () {
-    var quantity = document.getElementById('quantity').value;
-    var productId = document.querySelector('.product-container').dataset.productId;
-    add_to_order(productId, quantity);
-});
-
 function add_to_order(id, quantity) {
     fetch(`/create_orderItem`,
         {
@@ -35,60 +28,56 @@ function add_to_order(id, quantity) {
             document.getElementById('orderItem_creation_action_response').textContent = error.message;
         });
 }
+// event lisenter for creating orderItem button
+document.getElementById('add-to-cart-form').addEventListener('submit', function () {
+    var quantity = document.getElementById('quantity').value;
+    var productId = document.querySelector('.product-container').dataset.productId;
+    add_to_order(productId, quantity);
+});
 
+
+// ===================== CODE THAT SHOULD BE INCLUDED IN MOST PAGES ========================
 
 // ================ logo redirect =================
 
+function logo_redirect() {
+    window.location.href = '/';
+}
 // event lisenter for logo redirect
 document.getElementById('logo').addEventListener('click', function () {
     logo_redirect();
 });
 
-function logo_redirect() {
-    window.location.replace('/');
+// ===================== cart redirect ========================
+function cart_redirect() {
+    window.location.href = '/cart';
 }
+// event lisenter for logo redirect
+document.getElementById('cart').addEventListener('click', function () {
+    cart_redirect();
+});
 
+// ===================== account redirect ========================
+function account_redirect() {
+    window.location.href = '/myaccount';
+}
+// event lisenter for logo redirect
+document.getElementById('account-link').addEventListener('click', function () {
+    account_redirect();
+});
 
 // =================== register redirect ===================
 
+function register_redirect() {
+    window.location.href = '/register';
+}
 // event lisenter for logo redirect
 document.getElementById('register_button').addEventListener('click', function () {
     register_redirect();
 });
 
-function register_redirect() {
-    window.location.replace('/register');
-}
-
-
-// =================== login form functionality =====================
-
-// Close the dropdown if the user clicks outside of it
-window.addEventListener('click', function () {
-    var dropdownContent = document.getElementById('loginDropdown');
-    dropdownContent.style.display = "none"; // Hide the dropdown when anywhere else on the window is clicked
-});
-
-document.getElementById('account-icon').addEventListener('click', function (event) {
-    var dropdownContent = document.getElementById('loginDropdown');
-    if (dropdownContent.style.display === "none") {
-        dropdownContent.style.display = "block";
-    } else {
-        dropdownContent.style.display = "none";
-    }
-    event.stopPropagation();
-});
-
 
 // ===================== login form LOGIN ========================
-
-// event lisenter for login button
-document.getElementById('loginForm').addEventListener('submit', function (event) {
-    event.preventDefault(); // Prevent the form from being submitted normally
-    var email = document.getElementById('email').value;
-    var password = document.getElementById('password').value;
-    login(email, password);
-});
 
 function login(email, password) {
     fetch(`/login`,
@@ -120,6 +109,35 @@ function login(email, password) {
         });
 }
 
+// event lisenter for login button
+document.getElementById('loginForm').addEventListener('submit', function (event) {
+    event.preventDefault(); // Prevent the form from being submitted normally
+    var email = document.getElementById('email').value;
+    var password = document.getElementById('password').value;
+    login(email, password);
+});
+
+// =================== login form functionality =====================
+
+// Add a click event listener to the account icon
+document.getElementById('account-icon').addEventListener('click', function (event) {
+    var dropdownContent = document.getElementById('loginDropdown');
+    if (dropdownContent.style.display === "none") {
+        dropdownContent.style.display = "block";
+    } else {
+        dropdownContent.style.display = "none";
+    }
+    event.stopPropagation();
+});
+// Close the dropdown if the user clicks outside of it
+window.addEventListener('click', function () {
+    var dropdownContent = document.getElementById('loginDropdown');
+    dropdownContent.style.display = "none"; // Hide the dropdown when anywhere else on the window is clicked
+});
+// Prevent clicks inside the dropdown from closing the dropdown
+document.getElementById('loginForm').addEventListener('click', function (event) {
+    event.stopPropagation(); // Stop the click event from bubbling up to parent elements
+});
 
 window.onload = function () {
     fetch('/get_username')
@@ -130,3 +148,17 @@ window.onload = function () {
             }
         });
 };
+
+// =================== categories =====================
+
+function redirect_categories(category_name) {
+    window.location.href = '/categories/' + category_name;
+}
+
+categoriesList.addEventListener('click', function (event) {
+    event.preventDefault();
+    var target = event.target;
+    if (target.tagName === 'A') {
+        redirect_categories(target.textContent);
+    }
+});

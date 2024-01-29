@@ -98,20 +98,17 @@ def Specific_Product(id):
 def Cart():
     return 'Cart Page'
 
-'''Return the all categories page'''
-@app.route('/categories')
-def Categories():
-    categories = Category.query.all()
-    return render_template("categories.html", categories=categories)
-
 '''Return the specific category Page'''
-@app.route('/categories/<int:id>')
-def Specific_category(id):
-    category = Category.query.filter_by(id=id).first()
-    if Category is None:
-        return "Category not found"
-    return render_template("show_category.html", category=category)
-
+@app.route('/categories/<category_name>', methods=['GET'])
+def Specific_category(category_name):
+    # get category from the database
+    try:
+        category = Category.query.filter_by(category_name=category_name).first()
+        if category is None:
+            return "Category not found"
+        return render_template("show_category.html", category=category)
+    except Exception as e:
+        return make_response(jsonify({'message': 'error finding category', 'error': str(e)}), 404)
 
 ''' ========= Return the login page ======='''
 
@@ -179,9 +176,9 @@ def register():
         return render_template("register.html")
 
 '''Return your account page'''
-@app.route('/myaccount/<int:id>')
-def MyAccount(id):
-    return 'My Account Page'   
+@app.route('/myaccount')
+def MyAccount():
+    return render_template("account.html")  
 
 '''Return the checkout page'''
 @app.route('/checkout')
