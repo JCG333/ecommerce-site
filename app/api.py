@@ -271,6 +271,19 @@ def average_rating(id) -> str:
         return make_response(jsonify({'average': average}), 200)
     except Exception as e:
         return make_response(jsonify({'message': 'error getting average rating', 'error': str(e)}), 500)
+    
+'''
+= Return number of reviews =
+id: id of the product
+reviews: list of reviews for the product
+'''
+@app.route('/number_of_reviews/<int:id>', methods=['GET'])
+def number_of_reviews(id) -> str:
+    try:
+        reviews = Review.query.filter_by(product_id=id).all()
+        return make_response(jsonify({'number_of_reviews': len(reviews)}), 200)
+    except Exception as e:
+        return make_response(jsonify({'message': 'error getting number of reviews', 'error': str(e)}), 500)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=4000, debug=True)

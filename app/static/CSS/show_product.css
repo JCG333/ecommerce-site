@@ -126,6 +126,8 @@ body {
     gap: 10px;
     align-self: center;
     overflow: auto;
+    max-width: 500px;
+    width: 100%;
 }
 
 #reviewsDropdown a {

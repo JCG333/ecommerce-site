@@ -291,11 +291,23 @@ function updateAverageRating(productId) {
                 star.textContent = '★';
                 averageRatingElement.appendChild(star);
             }
-            star.textContent += ' (' + data.average + ')';
-            averageRatingElement.appendChild(star);
+            // add number of reviews
+            updateNumberOfReviews(productId);
+
         });
 }
-
+//get number of reviews
+function updateNumberOfReviews(productId) {
+    fetch('/number_of_reviews/' + productId)
+        .then(response => response.json())
+        .then(data => {
+            // Update the #average_rating element with the new rating
+            var averageRatingElement = document.getElementById('average_rating');
+            var reviews_num = document.createElement('span');
+            reviews_num.textContent = '(' + data.number_of_reviews + ')';
+            averageRatingElement.appendChild(reviews_num);
+        });
+}
 
 window.onload = function () {
     fetch('/get_username')
