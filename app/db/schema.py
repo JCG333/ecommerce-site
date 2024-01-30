@@ -106,6 +106,9 @@ class Review(db.Model):
         self.product_id = product_id
         self.rating = rating
         self.comment = comment
+    
+    def json(self):
+        return {'id': self.id, 'rating': self.rating, 'comment': self.comment, 'created_at': self.created_at, 'user_name': self.user.name}
 
 '''
 Table that stores the order information

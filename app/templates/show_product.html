@@ -7,6 +7,7 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='CSS/show_product.css') }}">
     <!-- Link to the JavaScript file -->
     <script src="{{ url_for('static', filename='JS/show_product.js') }}" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
 <!--- UNIVERSAL -->
@@ -77,6 +78,7 @@
         <!-- product info -->
         <div class="product-details">
             <h1>{{product.name}}</h1>
+            <p id="average_rating">Average Rating: </p>
             <p>{{product.description}}</p>
             <p id="price_tag">{{product.price}} SEK </p>
             <form id="add-to-cart-form">
@@ -88,6 +90,37 @@
         <!-- http response output window -->
         <div id="orderItem_creation_action_response"></div>
     </div>
+
+    <div class="review-container" data-review-id="{{product.id}}">
+        <!-- new review can be written here -->
+        <form id="review-form">
+            <label id="review_title" for="review">Review the product</label>
+            <br>
+            <textarea id="review" name="review" rows="4" cols="50" required></textarea>
+            <br>
+            <div id="rating-box">
+                <label for="rating">Rating:</label><br>
+                <input type="radio" id="1" name="rating" value="1">
+                <label for="1">1</label><br>
+                <input type="radio" id="2" name="rating" value="2">
+                <label for="2">2</label><br>
+                <input type="radio" id="3" name="rating" value="3">
+                <label for="3">3</label><br>
+                <input type="radio" id="4" name="rating" value="4">
+                <label for="4">4</label><br>
+                <input type="radio" id="5" name="rating" value="5">
+                <label for="5">5</label><br>
+            </div>
+            <input id="create_review_button" type="submit" value="Submit">
+        </form>
+        <!-- reviews will be shown here -->
+        <button id="reviewsButton">Show reviews</button>
+        <br>
+        <div id="reviewsDropdown" class="dropdown-review-content">
+            <!-- Reviews will be added here -->
+        </div>
+    </div>
+
 </body>
 
 <!--- UNIVERSAL -->

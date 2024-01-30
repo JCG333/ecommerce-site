@@ -1,6 +1,6 @@
 from flask import Flask, abort, flash, redirect, render_template, request, url_for, jsonify, make_response, session
 from os import environ
-from db.schema import db, User, Category, Product, Order, Order_item
+from db.schema import db, User, Category, Product, Order, Order_item, Review
 
 
 app = Flask(__name__)
@@ -13,31 +13,41 @@ def create_tables():
         db.init_app(app)
         db.create_all()
 
-        try:
-            category1 = Category(category_name ='T-Shirts', parent_category_id = None)
-            db.session.add(category1)
-            db.session.commit()
+        # Add default entries if they're not already in the database
+        if not User.query.first() and not Product.query.first() and not Category.query.first() and not Review.query.first():
+            try:
+                category1 = Category(category_name ='T-Shirts', parent_category_id = None)
+                db.session.add(category1)
+                db.session.commit()
 
-            product1 = Product(name ='T-Shirt', price =10.00, description ='This is a T-Shirt', image ='images/t-shirts/shrek_t-shirts_1.png', quantity =10, category_id=category1.id)
-            db.session.add(product1)
-            db.session.commit()
+                product1 = Product(name ='T-Shirt', price =10.00, description ='This is a T-Shirt', image ='images/t-shirts/shrek_t-shirts_1.png', quantity =10, category_id=category1.id)
+                db.session.add(product1)
+                db.session.commit()
 
-            admin = User(name='admin', email='admin@shrek.com', password='abc123', admin=True)
-            db.session.add(admin)
-            db.session.commit()
+                admin = User(name='admin', email='admin@shrek.com', password='abc123', admin=True)
+                db.session.add(admin)
+                db.session.commit()
 
-            print('Default entries added successfully')
-        
-        except Exception as e:
-            print('Didnt work', e)
+                review = Review(product_id=product1.id, user_id=admin.id, rating=5, comment='This is a great product')
+                db.session.add(review)
+                db.session.commit()
+
+                print('Default entries added successfully')
+            
+            except Exception as e:
+                print('Error occured:', e)
 
 create_tables()
 
 
-'''====== Create a new order item (if no order exists, create one, and add new item to it) ====='''
-
+'''
+= Create a new order item and add to cart =
+product_id: id of the product
+quantity: quantity of the product
+user_id: id of the user 
+'''
 @app.route('/create_orderItem', methods=['POST'])
-def create_orderItem():
+def create_orderItem() -> str:
     #get the product id and quantity from the request
     data = request.get_json()
     product_id = data.get('product_id')
@@ -85,9 +95,12 @@ def Home():
 def Products():
     return 'All Products Page'
 
-'''Return a specific product page'''
+'''
+= Return a specific product page =
+id: id of the product
+'''
 @app.route('/products/<int:id>')
-def Specific_Product(id):
+def Specific_Product(id) -> str:
     product = Product.query.filter_by(id=id).first()
     if product is None:
         return "Product not found"
@@ -98,9 +111,12 @@ def Specific_Product(id):
 def Cart():
     return 'Cart Page'
 
-'''Return the specific category Page'''
+'''
+= Return the specific category Page =
+category_name: name of the category
+'''
 @app.route('/categories/<category_name>', methods=['GET'])
-def Specific_category(category_name):
+def Specific_category(category_name) -> str:
     # get category from the database
     try:
         category = Category.query.filter_by(category_name=category_name).first()
@@ -110,10 +126,14 @@ def Specific_category(category_name):
     except Exception as e:
         return make_response(jsonify({'message': 'error finding category', 'error': str(e)}), 404)
 
-''' ========= Return the login page ======='''
+'''
+= Return the login page =
+email: email of the user
+password: password of the user
+'''
 
 @app.route('/login', methods=['POST'])
-def Login():
+def Login() -> str:
     # Get the email and password from the request
     data = request.get_json()
     email = data.get('email')
@@ -198,7 +218,59 @@ def Logout():
         return make_response(jsonify({'message': 'Successfully logged out'}), 200)
     except Exception as e:
         return make_response(jsonify({'message': 'Error logging out', 'error': str(e)}), 500)
+    
+'''
+= Return reviews for a specific product =
+product_id: id of the product
+reviews: list of reviews for the product
+'''
+@app.route('/reviews/<int:id>', methods=['GET'])
+def get_reviews(id) -> str:
+    try:
+        reviews = Review.query.filter_by(product_id=id).all()
+        return make_response(jsonify({'reviews': [review.json() for review in reviews]}), 200)
+    except Exception as e:
+        return make_response(jsonify({'message': 'error getting reviews', 'error': str(e)}), 500)
 
+'''
+= Create reviews for a specific product =
+product_id: id of the product
+user_id: id of the user
+rating: rating of the product
+comment: comment of the product
+'''
+@app.route('/post_review/<int:id>', methods=['PUT'])
+def post_reviews(id) -> str:
+    try:
+        request.get_json()
+        user_id = session['user_id']
+        rating = request.json.get('rating')
+        comment = request.json.get('comment')
+        review = Review(product_id=id, user_id=user_id, rating=rating, comment=comment)
+        db.session.add(review)
+        db.session.commit()
+        return make_response(jsonify({'message': 'Successfully posted review'}), 200)
+    except Exception as e:
+        return make_response(jsonify({'message': 'error posting review', 'error': str(e)}), 500)
+
+
+'''
+= Return average rating =
+id: id of the product
+reviews: list of reviews for the product
+average: average rating of the product
+'''
+@app.route('/average_rating/<int:id>', methods=['GET'])
+def average_rating(id) -> str:
+    try:
+        reviews = Review.query.filter_by(product_id=id).all()
+        average = 0
+        for review in reviews:
+            average += review.rating
+        average = average/len(reviews)
+        return make_response(jsonify({'average': average}), 200)
+    except Exception as e:
+        return make_response(jsonify({'message': 'error getting average rating', 'error': str(e)}), 500)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=4000, debug=True)
