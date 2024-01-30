@@ -291,6 +291,8 @@ function updateAverageRating(productId) {
                 star.textContent = '★';
                 averageRatingElement.appendChild(star);
             }
+            star.textContent += ' (' + data.average + ')';
+            averageRatingElement.appendChild(star);
         });
 }
 
