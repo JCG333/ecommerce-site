@@ -198,7 +198,9 @@ function get_reviews(product_id) {
                 data.reviews.forEach(review => {
                     var item = document.createElement('a');
                     item.href = '#';
-                    item.textContent = review.user_name + ': ' + review.comment + ' - ' + '★'.repeat(review.rating);
+                    var date = new Date(review.created_at);
+                    var formattedDate = date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+                    item.innerHTML = '[' + formattedDate + '] ' + '<strong>' + review.user_name + '</strong>' + ': ' + review.comment + ' - ' + '★'.repeat(review.rating);
                     item.style.display = 'block';
                     dropdown.appendChild(item);
                 });
