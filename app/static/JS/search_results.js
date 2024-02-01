@@ -1,42 +1,4 @@
-// =============== add item to cart =================
-
-function add_to_order(id, quantity) {
-    fetch(`/create_orderItem`,
-        {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                product_id: id,
-                quantity: quantity
-            })
-        })
-        // check if response is OK
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(error => Promise.reject(error));
-            }
-            return response.json();
-        })
-        // if OK
-        .then(data => {
-            document.getElementById('orderItem_creation_action_response').textContent = 'item added to cart!';
-        })
-        // Error handling
-        .catch(error => {
-            document.getElementById('orderItem_creation_action_response').textContent = error.message;
-        });
-}
-// event lisenter for creating orderItem button
-document.getElementById('add-to-cart-form').addEventListener('submit', function () {
-    var quantity = document.getElementById('quantity').value;
-    var productId = document.querySelector('.product-container').dataset.productId;
-    add_to_order(productId, quantity);
-});
-
-
-// ===================== UNIVERSAL ========================
+// ===================== CODE THAT SHOULD BE INCLUDED IN MOST PAGES ========================
 
 // ================ logo redirect =================
 
@@ -177,103 +139,15 @@ categoriesList.addEventListener('click', function (event) {
     }
 });
 
-// =================== PRODUCT SPECIFIC =====================
-
-// =================== get reviews =====================
-
-function get_reviews(product_id) {
-    fetch(`/reviews/${product_id}`)
-        // check if response is OK
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(error => Promise.reject(error));
-            }
-            return response.json();
-        })
-        // if OK
-        .then(data => {
-            var dropdown = document.getElementById('reviewsDropdown');
-            // Clear previous options
-            dropdown.innerHTML = '';
-
-            if (data.reviews) {
-                data.reviews.forEach(review => {
-                    var item = document.createElement('a');
-                    item.href = '#';
-                    var date = new Date(review.created_at);
-                    var formattedDate = date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
-                    item.innerHTML = '[' + formattedDate + '] ' + '<strong>' + review.user_name + '</strong>' + ': ' + review.comment + ' - ' + '★'.repeat(review.rating);
-                    item.style.display = 'block';
-                    dropdown.appendChild(item);
-                });
-            }
-        })// Error handling
-        .catch(error => {
-            document.getElementById('orderItem_creation_action_response').textContent = error.message;
-        });
-}
-// Add event listener to the dropdown
-document.getElementById('reviewsButton').addEventListener('click', function () {
-    var dropdown = document.getElementById('reviewsDropdown');
-    dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
-    var product_id = document.querySelector('.review-container').dataset.reviewId;
-    get_reviews(product_id);
-});
-
-// =================== post review =====================
-
-function post_review(product_id, comment, rating) {
-    fetch(`/post_review/${product_id}`,
-        {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                comment: comment,
-                rating: rating
-            })
-        })
-        // check if response is OK
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(error => Promise.reject(error));
-            }
-            return response.json();
-        })
-        // if OK
-        .then(data => {
-            document.getElementById('orderItem_creation_action_response').textContent = 'Review posted successfully!';
-        })
-        // Error handling
-        .catch(error => {
-            document.getElementById('orderItem_creation_action_response').textContent = error.message;
-        });
-}
-// Add event listener to the form
-document.getElementById('review-form').addEventListener('submit', function (event) {
-    event.preventDefault(); // Prevent the form from being submitted normally
-    var comment = document.getElementById('review').value;
-    var product_id = document.querySelector('.review-container').dataset.reviewId;
-    // Select the radio buttons
-    var ratings = document.getElementsByName('rating');
-
-    // Initialize a variable to store the selected rating
-    var selectedRating;
-
-    // Loop through the radio buttons
-    for (var i = 0; i < ratings.length; i++) {
-        // If the radio button is checked
-        if (ratings[i].checked) {
-            // Store the value of the checked radio button
-            selectedRating = ratings[i].value;
-
-            // Break the loop
-            break;
-        }
+//search bar
+function search(event) {
+    if (event.key === 'Enter') {
+        var searchQuery = document.getElementById('search').value;
+        window.location.href = '/search/' + searchQuery;
     }
-    post_review(product_id, comment, selectedRating);
-});
+}
+// event listener for search bar
+document.getElementById('search').addEventListener('keypress', search);
 
 // ================ get average rating ==================
 function updateAverageRating(productId) {
@@ -288,7 +162,6 @@ function updateAverageRating(productId) {
             while (averageRatingElement.firstChild) {
                 averageRatingElement.removeChild(averageRatingElement.firstChild);
             }
-
             // Add the new stars
             for (var i = 0; i < data.average; i++) {
                 var star = document.createElement('span');
@@ -300,6 +173,7 @@ function updateAverageRating(productId) {
 
         });
 }
+
 //get number of reviews
 function updateNumberOfReviews(productId) {
     fetch('/number_of_reviews/' + productId)
@@ -312,25 +186,8 @@ function updateNumberOfReviews(productId) {
             if (data.number_of_reviews > 0) {
                 averageRatingElement.appendChild(reviews_num);
             }
-            else {
-                reviews_num.textContent = '(no reviews)';
-                averageRatingElement.appendChild(reviews_num);
-            }
         });
 }
-
-//==================== search bar ==================
-
-//search bar
-function search(event) {
-    if (event.key === 'Enter') {
-        var searchQuery = document.getElementById('search').value;
-        window.location.href = '/search/' + searchQuery;
-    }
-}
-// event listener for search bar
-document.getElementById('search').addEventListener('keypress', search);
-
 
 window.onload = function () {
     fetch('/get_username')
@@ -343,7 +200,6 @@ window.onload = function () {
                 document.getElementById('user-name').textContent = ''; // Display nothing
             }
         });
-    // Call the function when the page loads
-    var productId = document.querySelector('.product-container').dataset.productId;
+    var productId = document.querySelector('.product').dataset.productId;
     updateAverageRating(productId);
 };

@@ -20,8 +20,12 @@ def create_tables():
                 db.session.add(category1)
                 db.session.commit()
 
-                product1 = Product(name ='T-Shirt', price =10.00, description ='This is a T-Shirt', image ='images/t-shirts/shrek_t-shirts_1.png', quantity =10, category_id=category1.id)
+                product1 = Product(name ='T-Shirt', price =25.00, description ='This is a T-Shirt.', image ='images/t-shirts/shrek_t-shirts_1.png', quantity =10, category_id=category1.id)
                 db.session.add(product1)
+                product2 = Product(name ='Shrek running t-shirt', price =50.00, description ='This is a T-Shirt of Shrek running.', image ='images/t-shirts/shrek_t-shirts_2.png', quantity =30, category_id=category1.id)
+                db.session.add(product2)
+                product3 = Product(name ='Cool Shrek t-shirt', price =125.00, description ='This is a T-Shirt of Shrek being cool.', image ='images/t-shirts/shrek_t-shirts_3.png', quantity =5, category_id=category1.id)
+                db.session.add(product3)
                 db.session.commit()
 
                 admin = User(name='admin', email='admin@shrek.com', password='abc123', admin=True)
@@ -284,6 +288,20 @@ def number_of_reviews(id) -> str:
         return make_response(jsonify({'number_of_reviews': len(reviews)}), 200)
     except Exception as e:
         return make_response(jsonify({'message': 'error getting number of reviews', 'error': str(e)}), 500)
+    
+'''
+= return the search results =
+search_term: search term
+products: list of products that match the search term
+'''
+@app.route('/search/<search_term>', methods=['GET'])
+def search(search_term):
+    try:
+        products = Product.query.filter(Product.name.ilike('%' + search_term + '%')).all()
+        print('!!! product search results:',products)
+        return render_template("search_results.html", products=products)
+    except Exception as e:
+        return make_response(jsonify({'message': 'error searching', 'error': str(e)}), 500)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=4000, debug=True)

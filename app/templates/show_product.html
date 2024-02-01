@@ -14,8 +14,10 @@
 
 <!-- The header contains the logo, search bar, user name, login form and cart -->
 <header>
-    <!-- Logo -->
-    <a href="#" id="logo"><img src="{{ url_for('static', filename='images/admin/home_icon.png') }}" alt="Logo"></a>
+    <div id="left-nav">
+        <!-- Logo -->
+        <a href="#" id="logo"><img src="{{ url_for('static', filename='images/admin/home_icon.png') }}" alt="Logo"></a>
+    </div>
 
     <!-- Navigation items-->
     <div id="navigation">
@@ -37,34 +39,35 @@
     </div>
 
     <!-- Login -->
+    <div id="right-nav">
+        <!-- Users name -->
+        <span id="user-name"></span> <!-- Placeholder for the user's name -->
 
-    <!-- Users name -->
-    <span id="user-name"></span> <!-- Placeholder for the user's name -->
-
-    <!-- Login dropdown -->
-    <div class="dropdown">
-        <!-- login icon -->
-        <a href="#" id="account-icon"><img src="{{ url_for('static', filename='images/admin/account_icon.png') }}"
-                alt="Account"></a>
-        <!-- dropdown -->
-        <div id="loginDropdown" class="dropdown-content">
-            <form id="loginForm">
-                <label for="email">Email:</label>
-                <br>
-                <input type="email" id="email" name="email" required>
-                <label for="password">Password:</label>
-                <br>
-                <input type="password" id="password" name="password" required>
-                <input id="login_button" type="submit" value="Login">
-                <input id="register_button" type="button" value="Register">
-            </form>
-            <a id="account-link" href="#">My account</a>
-            <a id="logout-link" href="#">Logout</a>
+        <!-- Login dropdown -->
+        <div class="dropdown">
+            <!-- login icon -->
+            <a href="#" id="account-icon"><img src="{{ url_for('static', filename='images/admin/account_icon.png') }}"
+                    alt="Account"></a>
+            <!-- dropdown -->
+            <div id="loginDropdown" class="dropdown-content">
+                <form id="loginForm">
+                    <label for="email">Email:</label>
+                    <br>
+                    <input type="email" id="email" name="email" required>
+                    <label for="password">Password:</label>
+                    <br>
+                    <input type="password" id="password" name="password" required>
+                    <input id="login_button" type="submit" value="Login">
+                    <input id="register_button" type="button" value="Register">
+                </form>
+                <a id="account-link" href="#">My account</a>
+                <a id="logout-link" href="#">Logout</a>
+            </div>
         </div>
-    </div>
 
-    <!-- cart icon -->
-    <a href="#" id="cart"><img src="{{ url_for('static', filename='images/admin/cart_icon.png') }}" alt="Cart"></a>
+        <!-- cart icon -->
+        <a href="#" id="cart"><img src="{{ url_for('static', filename='images/admin/cart_icon.png') }}" alt="Cart"></a>
+    </div>
 </header>
 
 <!-- PRODUCT SPECIFIC -->
