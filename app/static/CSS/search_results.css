@@ -256,6 +256,10 @@ footer p {
     text-decoration: none;
 }
 
+#no-results-text {
+    margin-left: 48%;
+}
+
 /*===== AVERAGE RATING ======*/
 #average_rating {
     display: flex;

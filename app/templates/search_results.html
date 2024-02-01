@@ -74,6 +74,7 @@
 <body>
     <h1 id="product_title">Product Search Results</h1>
     <div class="results-container">
+        {% if products %}
         {% for product in products %}
         <div class="product" data-product-id="{{product.id}}">
             <a href="/products/{{product.id}}">
@@ -87,6 +88,9 @@
             </a>
         </div>
         {% endfor %}
+        {% else %}
+        <p id="no-results-text">No results</p>
+        {% endif %}
     </div>
 </body>
 

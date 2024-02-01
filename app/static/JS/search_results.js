@@ -143,7 +143,9 @@ categoriesList.addEventListener('click', function (event) {
 function search(event) {
     if (event.key === 'Enter') {
         var searchQuery = document.getElementById('search').value;
-        window.location.href = '/search/' + searchQuery;
+        if (searchQuery.length > 0) {
+            window.location.href = '/search/' + searchQuery;
+        }
     }
 }
 // event listener for search bar
@@ -200,6 +202,9 @@ window.onload = function () {
                 document.getElementById('user-name').textContent = ''; // Display nothing
             }
         });
-    var productId = document.querySelector('.product').dataset.productId;
-    updateAverageRating(productId);
+    var productElement = document.querySelector('.product');
+    if (productElement && productElement.dataset.productId) {
+        var productId = productElement.dataset.productId;
+        updateAverageRating(productId);
+    }
 };

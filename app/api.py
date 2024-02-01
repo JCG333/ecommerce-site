@@ -298,8 +298,9 @@ products: list of products that match the search term
 def search(search_term):
     try:
         products = Product.query.filter(Product.name.ilike('%' + search_term + '%')).all()
-        print('!!! product search results:',products)
-        return render_template("search_results.html", products=products)
+        if len(products) > 0:
+            return render_template("search_results.html", products=products)
+        return render_template("search_results.html", products=None)
     except Exception as e:
         return make_response(jsonify({'message': 'error searching', 'error': str(e)}), 500)
 
