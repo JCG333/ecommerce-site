@@ -261,7 +261,7 @@ footer p {
 }
 
 /*===== AVERAGE RATING ======*/
-#average_rating {
+.average_rating {
     display: flex;
     flex-direction: row;
     justify-content: left;

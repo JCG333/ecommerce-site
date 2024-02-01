@@ -81,7 +81,7 @@
                 <img class="product-image" src="{{ url_for('static', filename=product.image) }}" alt="{{product.name}}">
                 <div>
                     <p class="name">{{ product.name }}</p>
-                    <p id="average_rating"> (no reviews yet)</p>
+                    <p class="average_rating"> (no reviews yet)</p>
                     <p class="price">${{ product.price }}</p>
                     <p class="lager-status">In stock: {{ product.quantity }}</p>
                 </div>

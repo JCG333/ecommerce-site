@@ -268,10 +268,10 @@ average: average rating of the product
 def average_rating(id) -> str:
     try:
         reviews = Review.query.filter_by(product_id=id).all()
-        average = 0
-        for review in reviews:
-            average += review.rating
-        average = average/len(reviews)
+        if reviews:
+            average = sum(review.rating for review in reviews) / len(reviews)
+        else:
+            average = 0
         return make_response(jsonify({'average': average}), 200)
     except Exception as e:
         return make_response(jsonify({'message': 'error getting average rating', 'error': str(e)}), 500)

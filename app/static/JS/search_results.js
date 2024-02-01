@@ -152,37 +152,37 @@ function search(event) {
 document.getElementById('search').addEventListener('keypress', search);
 
 // ================ get average rating ==================
-function updateAverageRating(productId) {
+function updateAverageRating(productId, productElement) {
     fetch('/average_rating/' + productId)
         .then(response => response.json())
         .then(data => {
-            // Update the #average_rating element with the new rating
-            var averageRatingElement = document.getElementById('average_rating');
-            averageRatingElement.textContent = 'Average Rating: ' + data.average;
-
+            var averageRatingElement = productElement.querySelector('.average_rating');
             // Clear the stars
             while (averageRatingElement.firstChild) {
                 averageRatingElement.removeChild(averageRatingElement.firstChild);
             }
-            // Add the new stars
-            for (var i = 0; i < data.average; i++) {
-                var star = document.createElement('span');
-                star.textContent = '★';
-                averageRatingElement.appendChild(star);
+            // If there are reviews, update the rating
+            if (data.average) {
+                // Add the new stars
+                for (var i = 0; i < data.average; i++) {
+                    var star = document.createElement('span');
+                    star.textContent = '★';
+                    averageRatingElement.appendChild(star);
+                }
+            } else {
+                // If there are no reviews, display "(no reviews yet)"
+                averageRatingElement.textContent = '(no reviews yet)';
             }
-            // add number of reviews
-            updateNumberOfReviews(productId);
-
         });
 }
 
 //get number of reviews
-function updateNumberOfReviews(productId) {
+function updateNumberOfReviews(productId, productElement) {
     fetch('/number_of_reviews/' + productId)
         .then(response => response.json())
         .then(data => {
-            // Update the #average_rating element with the new rating
-            var averageRatingElement = document.getElementById('average_rating');
+            // Update the average_rating element of the specific product with the new rating
+            var averageRatingElement = productElement.querySelector('.average_rating');
             var reviews_num = document.createElement('span');
             reviews_num.textContent = '(' + data.number_of_reviews + ')';
             if (data.number_of_reviews > 0) {
@@ -202,9 +202,18 @@ window.onload = function () {
                 document.getElementById('user-name').textContent = ''; // Display nothing
             }
         });
-    var productElement = document.querySelector('.product');
-    if (productElement && productElement.dataset.productId) {
-        var productId = productElement.dataset.productId;
-        updateAverageRating(productId);
-    }
+    var productElements = document.querySelectorAll('.product');
+    productElements.forEach(productElement => {
+        if (productElement.dataset.productId) {
+            var productId = productElement.dataset.productId;
+            updateAverageRating(productId, productElement);
+        }
+    });
+    var productElements = document.querySelectorAll('.product');
+    productElements.forEach(productElement => {
+        if (productElement.dataset.productId) {
+            var productId = productElement.dataset.productId;
+            updateNumberOfReviews(productId, productElement);
+        }
+    });
 };
