@@ -50,6 +50,20 @@ header {
     margin-bottom: 40px;
 }
 
+#round-div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 20px;
+    height: 20px;
+    background-color: rgb(18, 132, 20);
+    color: white;
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    border-radius: 50%;
+}
+
 /* ===== NAVIGATION ITEMS ======*/
 
 #navigation {

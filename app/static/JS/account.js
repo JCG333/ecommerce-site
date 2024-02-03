@@ -1,4 +1,4 @@
-// ===================== CODE THAT SHOULD BE INCLUDED IN MOST PAGES ========================
+// ===================== UNIVERSAL ========================
 
 // ================ logo redirect =================
 
@@ -141,57 +141,109 @@ categoriesList.addEventListener('click', function (event) {
     }
 });
 
+//==================== search bar ==================
+
 //search bar
 function search(event) {
     if (event.key === 'Enter') {
         var searchQuery = document.getElementById('search').value;
-        if (searchQuery.length > 0) {
-            window.location.href = '/search/' + searchQuery;
-        }
+        window.location.href = '/search/' + searchQuery;
     }
 }
 // event listener for search bar
 document.getElementById('search').addEventListener('keypress', search);
 
-// ================ get average rating ==================
-function updateAverageRating(productId, productElement) {
-    fetch('/average_rating/' + productId)
+function showOrderItems(orderId) {
+    fetch('/order_items/' + orderId) // replace with your API endpoint
         .then(response => response.json())
         .then(data => {
-            var averageRatingElement = productElement.querySelector('.average_rating');
-            // Clear the stars
-            while (averageRatingElement.firstChild) {
-                averageRatingElement.removeChild(averageRatingElement.firstChild);
-            }
-            // If there are reviews, update the rating
-            if (data.average) {
-                // Add the new stars
-                for (var i = 0; i < data.average; i++) {
-                    var star = document.createElement('span');
-                    star.textContent = '★';
-                    averageRatingElement.appendChild(star);
-                }
+            var orderItems = data.order_items;
+            console.log(orderItems);
+            var orderItemsDiv = document.querySelector('#order-items');
+            orderItemsDiv.innerHTML = ''; // clear the div
+            var total = 0;
+
+            orderItems.forEach(orderItem => {
+                console.log(orderItem);
+                getProduct(orderItem.product_id)
+                    .then(product => {
+                        var image_url = product.product.image;
+                        var price = product.product.price;
+                        total += price * orderItem.quantity;
+                        // do something with image
+                        var itemDiv = document.createElement('div');
+                        itemDiv.classList.add('product-item');
+                        itemDiv.innerHTML = `
+                            <img src="/static/${image_url}" alt="${orderItem.product_name}">
+                            <p class="product-name">${orderItem.product_name}</p>
+                            <p class="price">$${price}</p>
+                            <p class="quantity">Quantity: ${orderItem.quantity}</p>
+                        `;
+                        orderItemsDiv.appendChild(itemDiv);
+                    });
+            });
+            // If the div is hidden, show it. Otherwise, hide it.
+            if (orderItemsDiv.style.display === "none") {
+                orderItemsDiv.style.display = "block";
             } else {
-                // If there are no reviews, display "(no reviews yet)"
-                averageRatingElement.textContent = '(no reviews yet)';
+                orderItemsDiv.style.display = "none";
             }
-        });
+        }
+        );
 }
 
-//get number of reviews
-function updateNumberOfReviews(productId, productElement) {
-    fetch('/number_of_reviews/' + productId)
-        .then(response => response.json())
-        .then(data => {
-            // Update the average_rating element of the specific product with the new rating
-            var averageRatingElement = productElement.querySelector('.average_rating');
-            var reviews_num = document.createElement('span');
-            reviews_num.textContent = '(' + data.number_of_reviews + ')';
-            if (data.number_of_reviews > 0) {
-                averageRatingElement.appendChild(reviews_num);
-            }
-        });
+// ================== GET PRODUCT ==================
+function getProduct(product_id) {
+    return fetch('/get_product/' + product_id)
+        .then(response => response.json());
 }
+
+document.querySelector('#show-order-button').addEventListener('click', function (event) {
+    event.stopPropagation();
+    var ordersDiv = document.querySelector('.orders');
+    var orderId = ordersDiv.dataset.orderId;
+    showOrderItems(orderId);
+});
+
+// =================== update user creadentials ==================
+function updateUserCred(name, email, password) {
+    fetch('/update_user', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            name: name,
+            email: email,
+            password: password
+        })
+    })
+        // check if response is OK
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(error => Promise.reject(error));
+            }
+            return response.json();
+        })
+        // if OK
+        .then(data => {
+            document.getElementById('orderItem_creation_action_response').textContent = 'User updated successfully!';
+            document.getElementById('user-name').textContent = name; // Display the user's name
+        })
+        // Error handling
+        .catch(error => {
+            document.getElementById('orderItem_creation_action_response').textContent = error.message;
+        });
+
+}
+// event lisenter for user credential updating
+document.getElementById('account-cred').addEventListener('submit', function (event) {
+    event.preventDefault(); // Prevent the form from being submitted normally
+    var name = document.getElementById('account-name').value;
+    var email = document.getElementById('account-email').value;
+    var password = document.getElementById('account-password').value;
+    updateUserCred(name, email, password);
+});
 
 // =================== cart notification =====================
 function updateCartNotification() {
@@ -207,6 +259,21 @@ function updateCartNotification() {
         });
 }
 
+// =================== update order total =====================
+function updateOrderTotal() {
+    fetch('/order_total')
+        .then(response => response.json())
+        .then(data => {
+            console.log(data.order_total);
+            if (data.order_total > 0)
+                document.getElementById('total-price').textContent = 'Order Total: $' + data.order_total;
+            else {
+                document.getElementById('total-price').textContent = '$0';
+            }
+        });
+}
+
+
 window.onload = function () {
     fetch('/get_username')
         .then(response => response.json())
@@ -218,19 +285,6 @@ window.onload = function () {
                 document.getElementById('user-name').textContent = ''; // Display nothing
             }
         });
-    var productElements = document.querySelectorAll('.product');
-    productElements.forEach(productElement => {
-        if (productElement.dataset.productId) {
-            var productId = productElement.dataset.productId;
-            updateAverageRating(productId, productElement);
-        }
-    });
-    var productElements = document.querySelectorAll('.product');
-    productElements.forEach(productElement => {
-        if (productElement.dataset.productId) {
-            var productId = productElement.dataset.productId;
-            updateNumberOfReviews(productId, productElement);
-        }
-    });
     updateCartNotification();
+    updateOrderTotal();
 };

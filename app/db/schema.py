@@ -79,6 +79,8 @@ class Product(db.Model):
         self.image = image
         self.quantity = quantity
         self.category_id = category_id
+    def json(self):
+        return {'id': self.id, 'name': self.name, 'price': self.price, 'description': self.description, 'image': self.image, 'quantity': self.quantity, 'category_id': self.category_id}
 
 '''
 Table that stores the review information
@@ -129,6 +131,8 @@ class Order(db.Model):
 
     def __init__(self, user_id):
         self.user_id = user_id
+    def json(self):
+        return {'id': self.id, 'order_date': self.order_date, 'shipping_address': self.shipping_address, 'user_name': self.user.name}
 
 '''
 Table that stores the order item information
@@ -151,4 +155,6 @@ class Order_item(db.Model):
         self.product_id = product_id
         self.quantity = quantity
         self.order_id = order_id
+    def json(self):
+        return {'id': self.id, 'product_name': self.product.name,'product_id': self.product_id, 'quantity': self.quantity, 'order_id': self.order_id}
 

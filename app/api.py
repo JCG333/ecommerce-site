@@ -202,7 +202,69 @@ def register():
 '''Return your account page'''
 @app.route('/myaccount')
 def MyAccount():
-    return render_template("account.html")  
+    if 'logged_in' not in session:
+        return make_response(jsonify({'message': 'Please log in to view account'}), 401)
+    user = User.query.filter_by(id=session['user_id']).first()
+    order = Order.query.filter_by(user_id=session['user_id']).first()
+    return render_template("account.html", user = user, order = order)  
+
+'''Return order items for a specific order'''
+@app.route('/order_items/<int:id>', methods=['GET'])
+def get_order_items(id) -> str:
+    try:
+        order_items = Order_item.query.filter_by(order_id=id).all()
+        return make_response(jsonify({'order_items': [order_item.json() for order_item in order_items]}), 200)
+    except Exception as e:
+        return make_response(jsonify({'message': 'error getting order items', 'error': str(e)}), 500)
+    
+'''Return product from product_id'''
+@app.route('/get_product/<int:id>', methods=['GET'])
+def get_product(id) -> str:
+    try:
+        product = Product.query.filter_by(id=id).first()
+        return make_response(jsonify({'product': product.json()}), 200)
+    except Exception as e:
+        return make_response(jsonify({'message': 'error getting product', 'error': str(e)}), 500)
+
+'''Update user creadentials'''
+@app.route('/update_user', methods=['PUT'])
+def update_user() -> str:
+    try:
+        if 'logged_in' not in session:
+            return make_response(jsonify({'message': 'Please log in to update user'}), 401)
+        request.get_json()
+        user = User.query.filter_by(id=session['user_id']).first()
+        user.name = request.json.get('name')
+        session['username'] = user.name
+        db.session.commit()
+        return make_response(jsonify({'message': 'Successfully updated user'}), 200)
+    except Exception as e:
+        return make_response(jsonify({'message': 'error updating user', 'error': str(e)}), 500)
+    
+'''Return order size for a specific order'''
+@app.route('/order_size', methods=['GET'])
+def order_size() -> str:
+    try:
+        if 'logged_in' not in session:
+            return make_response(jsonify({'message': 'Please log in to view order size'}), 401)
+        order = Order.query.filter_by(user_id=session['user_id']).first()
+        order_items = Order_item.query.filter_by(order_id=order.id).all()
+        return make_response(jsonify({'order_size': len(order_items)}), 200)
+    except Exception as e:
+        return make_response(jsonify({'message': 'error getting order size', 'error': str(e)}), 500)
+    
+'''Return order total'''
+@app.route('/order_total', methods=['GET'])
+def order_total() -> str:
+    try:
+        if 'logged_in' not in session:
+            return make_response(jsonify({'message': 'Please log in to view order total'}), 401)
+        order = Order.query.filter_by(user_id=session['user_id']).first()
+        order_items = Order_item.query.filter_by(order_id=order.id).all()
+        total = sum(order_item.product.price * order_item.quantity for order_item in order_items)
+        return make_response(jsonify({'order_total': total}), 200)
+    except Exception as e:
+        return make_response(jsonify({'message': 'error getting order total', 'error': str(e)}), 500)
 
 '''Return the checkout page'''
 @app.route('/checkout')

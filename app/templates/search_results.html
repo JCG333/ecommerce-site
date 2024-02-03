@@ -66,6 +66,7 @@
 
         <!-- cart icon -->
         <a href="#" id="cart"><img src="{{ url_for('static', filename='images/admin/cart_icon.png') }}" alt="Cart"></a>
+        <div id="round-div">0</div>
     </div>
 </header>
 
@@ -92,6 +93,8 @@
         <p id="no-results-text">No results</p>
         {% endif %}
     </div>
+    <!-- http response output window -->
+    <div id="orderItem_creation_action_response"></div>
 </body>
 
 <!--- UNIVERSAL -->

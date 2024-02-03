@@ -67,6 +67,7 @@
 
         <!-- cart icon -->
         <a href="#" id="cart"><img src="{{ url_for('static', filename='images/admin/cart_icon.png') }}" alt="Cart"></a>
+        <div id="round-div">0</div>
     </div>
 </header>
 
@@ -83,7 +84,7 @@
             <h1>{{product.name}}</h1>
             <p id="average_rating">Average Rating: </p>
             <p>{{product.description}}</p>
-            <p id="price_tag">{{product.price}} SEK </p>
+            <p id="price_tag">${{product.price}}</p>
             <form id="add-to-cart-form">
                 <!-- <label for="quantity">Quantity:</label> -->
                 <input type="number" id="quantity" name="quantity" min="1" max="{{product.quantity}}" value="1">
