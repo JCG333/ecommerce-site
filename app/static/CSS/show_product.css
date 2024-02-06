@@ -347,3 +347,32 @@ footer {
 footer p {
     margin: 0;
 }
+
+/*============== ERROR/SUCCESS MESSAGE CONTAINER ==============*/
+.error-message {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #bc4f4f;
+    color: white;
+    padding: 5px;
+    height: 5%;
+    text-align: center;
+    z-index: 9999;
+    display: none;
+}
+
+.success-message {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgb(18, 132, 20);
+    color: white;
+    padding: 5px;
+    height: 5%;
+    text-align: center;
+    z-index: 9999;
+    display: none;
+}

@@ -285,6 +285,14 @@ def Logout():
     except Exception as e:
         return make_response(jsonify({'message': 'Error logging out', 'error': str(e)}), 500)
     
+'''Return login status'''
+@app.route('/login_status', methods=['GET'])
+def login_status():
+    if 'logged_in' in session:
+        return make_response(jsonify({'logged_in': True}), 200)
+    else:
+        return make_response(jsonify({'message': 'Please log in before accessing the resource.'}), 401)
+    
 '''
 = Return reviews for a specific product =
 product_id: id of the product
@@ -308,14 +316,15 @@ comment: comment of the product
 @app.route('/post_review/<int:id>', methods=['PUT'])
 def post_reviews(id) -> str:
     try:
-        request.get_json()
-        user_id = session['user_id']
-        rating = request.json.get('rating')
-        comment = request.json.get('comment')
-        review = Review(product_id=id, user_id=user_id, rating=rating, comment=comment)
-        db.session.add(review)
-        db.session.commit()
-        return make_response(jsonify({'message': 'Successfully posted review'}), 200)
+        if 'logged_in' not in session:
+            request.get_json()
+            user_id = session['user_id']
+            rating = request.json.get('rating')
+            comment = request.json.get('comment')
+            review = Review(product_id=id, user_id=user_id, rating=rating, comment=comment)
+            db.session.add(review)
+            db.session.commit()
+            return make_response(jsonify({'message': 'Successfully posted review'}), 200)
     except Exception as e:
         return make_response(jsonify({'message': 'error posting review', 'error': str(e)}), 500)
 

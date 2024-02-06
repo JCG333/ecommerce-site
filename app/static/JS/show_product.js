@@ -21,11 +21,11 @@ function add_to_order(id, quantity) {
         })
         // if OK
         .then(data => {
-            document.getElementById('orderItem_creation_action_response').textContent = 'item added to cart!';
+            showError('item added to cart!', true);
         })
         // Error handling
         .catch(error => {
-            document.getElementById('orderItem_creation_action_response').textContent = error.message;
+            showError(error.message, false);
         });
 }
 // event lisenter for creating orderItem button
@@ -51,7 +51,22 @@ document.getElementById('logo').addEventListener('click', function () {
 
 // ===================== cart redirect ========================
 function cart_redirect() {
-    window.location.href = '/cart';
+    fetch('/login_status')
+        // check if response is OK
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(error => Promise.reject(error));
+            }
+            return response.json();
+        })
+        // if OK
+        .then(data => {
+            window.location.href = '/cart';
+        })
+        // Error handling
+        .catch(error => {
+            showError(error.message, false);
+        });
 }
 // event lisenter for logo redirect
 document.getElementById('cart').addEventListener('click', function () {
@@ -60,8 +75,25 @@ document.getElementById('cart').addEventListener('click', function () {
 
 // ===================== account redirect ========================
 function account_redirect() {
-    window.location.href = '/myaccount';
+    fetch('/login_status')
+        // check if response is OK
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(error => Promise.reject(error));
+            }
+            return response.json();
+        })
+        // if OK
+        .then(data => {
+            window.location.href = '/myaccount';
+        })
+        // Error handling
+        .catch(error => {
+            showError(error.message, false);
+        });
 }
+
+
 // event lisenter for logo redirect
 document.getElementById('account-link').addEventListener('click', function () {
     account_redirect();
@@ -89,13 +121,13 @@ function logout_redirect() {
         })
         // if OK
         .then(data => {
-            document.getElementById('orderItem_creation_action_response').textContent = 'logout success!';
+            showError('logout success!', true);
             document.getElementById('user-name').textContent = '';
             updateCartNotification();
         })
         // Error handling
         .catch(error => {
-            document.getElementById('orderItem_creation_action_response').textContent = error.message;
+            showError(error.message, false);
         });
 }
 // event lisenter for logo redirect
@@ -126,13 +158,13 @@ function login(email, password) {
         })
         // if OK
         .then(data => {
-            document.getElementById('orderItem_creation_action_response').textContent = 'User logged in successfully!';
+            showError('User logged in successfully!', true);
             document.getElementById('user-name').textContent = data.username; // Display the user's name
             updateCartNotification();
         })
         // Error handling
         .catch(error => {
-            document.getElementById('orderItem_creation_action_response').textContent = error.message;
+            showError(error.message, false);
         });
 }
 
@@ -212,7 +244,7 @@ function get_reviews(product_id) {
             }
         })// Error handling
         .catch(error => {
-            document.getElementById('orderItem_creation_action_response').textContent = error.message;
+            showError(error.message, false);
         });
 }
 // Add event listener to the dropdown
@@ -246,11 +278,11 @@ function post_review(product_id, comment, rating) {
         })
         // if OK
         .then(data => {
-            document.getElementById('orderItem_creation_action_response').textContent = 'Review posted successfully!';
+            showError('Review posted successfully!', true);
         })
         // Error handling
         .catch(error => {
-            document.getElementById('orderItem_creation_action_response').textContent = error.message;
+            showError(error.message, false);
         });
 }
 // Add event listener to the form
@@ -281,7 +313,13 @@ document.getElementById('review-form').addEventListener('submit', function (even
 // ================ get average rating ==================
 function updateAverageRating(productId) {
     fetch('/average_rating/' + productId)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(error => Promise.reject(error));
+            }
+            return response.json();
+        })
+        // if OK
         .then(data => {
             // Update the #average_rating element with the new rating
             var averageRatingElement = document.getElementById('average_rating');
@@ -300,13 +338,23 @@ function updateAverageRating(productId) {
             }
             // add number of reviews
             updateNumberOfReviews(productId);
-
+        })
+        // Error handling
+        .catch(error => {
+            showError(error.message, false);
         });
 }
 //get number of reviews
 function updateNumberOfReviews(productId) {
     fetch('/number_of_reviews/' + productId)
-        .then(response => response.json())
+        // check if response is OK
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(error => Promise.reject(error));
+            }
+            return response.json();
+        })
+        // if OK
         .then(data => {
             // Update the #average_rating element with the new rating
             var averageRatingElement = document.getElementById('average_rating');
@@ -319,6 +367,10 @@ function updateNumberOfReviews(productId) {
                 reviews_num.textContent = '(no reviews)';
                 averageRatingElement.appendChild(reviews_num);
             }
+        })
+        // Error handling
+        .catch(error => {
+            showError(error.message, false);
         });
 }
 
@@ -337,18 +389,43 @@ document.getElementById('search').addEventListener('keypress', search);
 // =================== cart notification =====================
 function updateCartNotification() {
     fetch('/order_size')
-        .then(response => response.json())
+        // check if response is OK
+        .then(response => {
+            return response.json();
+        })
+        // if OK
         .then(data => {
-            console.log(data.order_size);
             if (data.order_size > 0) {
                 document.getElementById('round-div').textContent = data.order_size;
             } else {
                 document.getElementById('round-div').textContent = 0;
             }
+        })
+        // Error handling
+        .catch(error => {
+            console.log('Error fetching order size: ' + error);
         });
 }
 
-
+/*----- error message -----*/
+function showError(message, status_code) {
+    var errorMessage = document.getElementById('error-message');
+    if (!status_code) {
+        errorMessage.innerHTML = '<p>Error: ' + message + '</p>';
+        errorMessage.classList.remove('sucess-message');
+        errorMessage.classList.add('error-message');
+        errorMessage.style.display = 'block'; // Show the error message
+    } else {
+        errorMessage.innerHTML = '<p>Success: ' + message + '</p>';
+        errorMessage.classList.remove('error-message');
+        errorMessage.classList.add('success-message');
+        errorMessage.style.display = 'block'; // Show the success message
+    }
+    // Hide the error message after 5 seconds
+    setTimeout(function () {
+        errorMessage.style.display = 'none';
+    }, 5000);
+}
 
 window.onload = function () {
     fetch('/get_username')
