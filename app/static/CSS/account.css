@@ -391,6 +391,7 @@ footer p {
     width: 90%;
     background-color: var(--primary-search-bar-color);
     max-height: 90%;
+    font-size: medium;
 }
 
 
