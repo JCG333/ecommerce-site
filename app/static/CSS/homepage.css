@@ -1,5 +1,10 @@
 @import 'colors.css';
 
+@font-face {
+    font-family: Shrekfont;
+    src: url(SHREK___.TTF);
+}
+
 /* ============ TABLE OF CONTENTS ============ 
     1. LAYOUT
     2. DECORATION
@@ -118,28 +123,15 @@ footer p {
 
 /* >>> ACCOUNT SPECIFIC LAYOUT ELEMENTS <<< */
 
-.product-container {
+.card-container {
     display: flex;
-    align-items: stretch;
+    flex-wrap: wrap;
     justify-content: center;
-    gap: 20px;
-    padding-top: 50px;
-    padding-left: 30%;
-    padding-bottom: 80px;
-}
-
-.review-container {
-    display: flex;
-    flex-direction: column;
     align-items: center;
-    height: 400px;
-    padding-bottom: 100px;
-    padding-top: 50px;
-    border-top: 0px solid var(--header-border-color);
+    margin-bottom: 250px;
 }
 
 /* ============ !DECORATION ============ */
-
 
 #header-banner p {
     color: var(--secondary-text-color);
@@ -149,7 +141,6 @@ footer p {
 }
 
 /* ------------ !ICONS ------------ */
-
 #logo i {
     font-size: 35px;
     margin-bottom: 40px;
@@ -376,134 +367,85 @@ footer p {
 
 /* >>> ACCOUNT SPECIFIC LAYOUT ELEMENTS <<< */
 
-/* ------------ !PRODUCT ------------ */
-
-.product-image {
-    width: 450px;
-    height: auto;
-}
-
-.product-details {
-    flex-grow: 1;
-}
-
-.product-details h1 {
-    font-size: 2em;
-}
-
-.product-details p {
-    font-size: 1em;
-}
-
-#price_tag,
-#review_title {
-    font-size: 1.1em;
-    font-weight: bold;
-}
-
-/* ------------ !ADD TO CART FORM ------------ */
-
-#add-to-cart-form {
-    font-size: 0.9em;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-#add-to-cart-form input {
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 1em;
-}
-
-#add-to-cart-form input {
-    max-width: 50px;
-}
-
-#add-to-cart-form button {
-    max-width: 110px;
-    background-color: var(--button-color);
-    border: 0px solid #ddd;
-    color: white;
-    cursor: pointer;
-    padding: 15px;
-    margin-top: 30px;
-    border-radius: 30px;
-    font-size: 1em;
-}
-
-#add-to-cart-form button:hover {
-    background-color: var(--button-hover-color);
-}
-
-/* ------------ !REVIEWS ------------ */
-#reviewsButton,
-#create_review_button {
-    max-width: 150px;
-    background-color: var(--button-color);
-    border: 0px solid #ddd;
-    color: white;
-    cursor: pointer;
-    padding: 13px;
-    border-radius: 30px;
-    font-size: 1em;
-
-}
-
-#reviewsButton:hover,
-#create_review_button:hover {
-    background-color: var(--button-hover-color);
-}
-
-#rating-box {
+.shreek {
+    font-family: 'Shrikhand', cursive;
+    font-size: 45px;
     display: flex;
     flex-direction: row;
     align-items: center;
+    /* this will vertically align the items in the center */
     justify-content: center;
-    gap: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    gap: 20px;
+    background: #fff;
+    padding: 0px 20px 100px 20px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
-#reviewsDropdown {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    align-self: center;
-    overflow: auto;
-    max-width: 500px;
-    width: 100%;
-}
-
-#reviewsDropdown a {
-    color: var(--primary-text-color);
-    text-decoration: none;
-}
-
-#review {
-    width: 600px;
+.shreek-logo {
+    width: 100px;
     height: 100px;
-    background-color: var(--primary-search-bar-color);
-    border: 0px solid var(--secondary-search-bar-color);
-    border-radius: 20px;
-    padding: 15px;
-    font-size: medium;
+    object-fit: contain;
+    /* this will ensure that the image is scaled while maintaining its aspect ratio */
+    border-radius: 60%;
+    margin-top: 110px;
+    margin-left: 20px;
+    /* this will make the image a circle */
 }
 
-#review::placeholder {
-    color: var(--secondary-search-bar-color);
-    font-size: medium;
+.shont {
+    font-family: shrekfont;
+    font-size: 150px;
 }
 
-#review:focus {
-    outline: none;
+.new-arrivals-heading {
+    font-size: 35px;
+    text-align: center;
+    font-family: shrekfont;
 }
 
-#review:focus::placeholder {
-    color: transparent;
+.card {
+    border: 1px solid black;
+    margin: 20px;
 }
 
-#average_rating {
-    margin-top: -30px;
+.card-title {
+    font-size: 25px;
+    font-weight: bold;
+    margin: 10px;
+    text-align: center;
+}
+
+.card-text {
+    font-size: 20px;
+    margin: 10px;
+    text-align: center;
+}
+
+.card img {
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+    margin-bottom: 20px;
+    border-bottom: 1px solid black;
+}
+
+.card h5 {
+    font-size: 20px;
+    margin: 10px;
+}
+
+.card p {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.colored-square {
+    bottom: 0;
+    left: 0;
+    width: auto;
+    height: 200px;
+    background-color: var(--primary-color);
 }

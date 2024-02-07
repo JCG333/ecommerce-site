@@ -1,5 +1,10 @@
 @import 'colors.css';
 
+@font-face {
+    font-family: Shrekfont;
+    src: url(SHREK___.TTF);
+}
+
 /* ============ TABLE OF CONTENTS ============ 
     1. LAYOUT
     2. DECORATION
@@ -118,28 +123,7 @@ footer p {
 
 /* >>> ACCOUNT SPECIFIC LAYOUT ELEMENTS <<< */
 
-.product-container {
-    display: flex;
-    align-items: stretch;
-    justify-content: center;
-    gap: 20px;
-    padding-top: 50px;
-    padding-left: 30%;
-    padding-bottom: 80px;
-}
-
-.review-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 400px;
-    padding-bottom: 100px;
-    padding-top: 50px;
-    border-top: 0px solid var(--header-border-color);
-}
-
 /* ============ !DECORATION ============ */
-
 
 #header-banner p {
     color: var(--secondary-text-color);
@@ -376,134 +360,167 @@ footer p {
 
 /* >>> ACCOUNT SPECIFIC LAYOUT ELEMENTS <<< */
 
-/* ------------ !PRODUCT ------------ */
-
-.product-image {
-    width: 450px;
-    height: auto;
-}
-
-.product-details {
-    flex-grow: 1;
-}
-
-.product-details h1 {
-    font-size: 2em;
-}
-
-.product-details p {
-    font-size: 1em;
-}
-
-#price_tag,
-#review_title {
-    font-size: 1.1em;
-    font-weight: bold;
-}
-
-/* ------------ !ADD TO CART FORM ------------ */
-
-#add-to-cart-form {
-    font-size: 0.9em;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-#add-to-cart-form input {
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 1em;
-}
-
-#add-to-cart-form input {
-    max-width: 50px;
-}
-
-#add-to-cart-form button {
-    max-width: 110px;
-    background-color: var(--button-color);
-    border: 0px solid #ddd;
-    color: white;
-    cursor: pointer;
-    padding: 15px;
-    margin-top: 30px;
-    border-radius: 30px;
-    font-size: 1em;
-}
-
-#add-to-cart-form button:hover {
-    background-color: var(--button-hover-color);
-}
-
-/* ------------ !REVIEWS ------------ */
-#reviewsButton,
-#create_review_button {
-    max-width: 150px;
-    background-color: var(--button-color);
-    border: 0px solid #ddd;
-    color: white;
-    cursor: pointer;
-    padding: 13px;
-    border-radius: 30px;
-    font-size: 1em;
-
-}
-
-#reviewsButton:hover,
-#create_review_button:hover {
-    background-color: var(--button-hover-color);
-}
-
-#rating-box {
+.Admin {
+    font-family: 'Shrikhand', cursive;
+    font-size: 45px;
     display: flex;
     flex-direction: row;
     align-items: center;
+    /* this will vertically align the items in the center */
     justify-content: center;
-    gap: 10px;
+    margin-top: 20px;
+    gap: 20px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
-#reviewsDropdown {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    align-self: center;
-    overflow: auto;
-    max-width: 500px;
-    width: 100%;
+.shreek-logo {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+
 }
 
-#reviewsDropdown a {
-    color: var(--primary-text-color);
+.shont {
+    font-family: shrekfont;
+    font-size: 100px;
+}
+
+.admin-bar {
+    display: flex !important;
+    justify-content: space-around;
+    background-color: var(--secondary-color);
+    padding: 10px;
+    color: white;
+}
+
+.admin-bar a {
     text-decoration: none;
+    color: white;
 }
 
-#review {
-    width: 600px;
-    height: 100px;
-    background-color: var(--primary-search-bar-color);
-    border: 0px solid var(--secondary-search-bar-color);
-    border-radius: 20px;
-    padding: 15px;
-    font-size: medium;
+
+/* ========== ADMIN NAV BAR ========= */
+section {
+    margin: 20px 0;
+    text-align: center;
 }
 
-#review::placeholder {
-    color: var(--secondary-search-bar-color);
-    font-size: medium;
+ul {
+    list-style-type: none;
 }
 
-#review:focus {
-    outline: none;
+ol {
+    list-style-type: none;
+    width: fit-content;
+    margin: auto;
 }
 
-#review:focus::placeholder {
-    color: transparent;
+.step-text {
+    margin-top: 10px;
+    text-align: left;
 }
 
-#average_rating {
-    margin-top: -30px;
+li {
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+#placeholder-section {
+
+    padding-left: 250px;
+    padding-right: 250px;
+    padding-top: 80px;
+    font-family: shrekfont;
+}
+
+
+#placeholder-text {
+    color: #333;
+    font-size: 30px;
+}
+
+#issue1 {
+    margin-top: 10px;
+}
+
+#issue2 {
+    margin-top: 10px;
+}
+
+/* ========== USER TABLE ========= */
+
+table {
+    margin-left: auto;
+    margin-right: auto;
+    min-width: 400px;
+    border-collapse: collapse;
+}
+
+td:not(:last-child),
+th:not(:last-child) {
+    min-width: 200px;
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+td:last-child,
+th:last-child {
+    width: 50px;
+}
+
+th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* ========== ORDERS ========= */
+
+.order-title h2 {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 30px;
+    font-family: shrekfont;
+}
+
+.order-container {
+    margin-bottom: 20px;
+    padding: 20px;
+    border: 1px solid #362323;
+    background-color: var(--primary-color);
+    border-radius: 5px;
+    width: 80%;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.order-container h3 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.order-details {
+    padding: 10px;
+    background-color: var(--secondary-color);
+}
+
+.order-details p,
+.order-details ul {
+    margin: 0 0 10px;
+}
+
+.order-details ul {
+    padding-left: 20px;
+}
+
+.order-details ul li {
+    margin-bottom: 5px;
 }

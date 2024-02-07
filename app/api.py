@@ -1,6 +1,9 @@
+import os
 from flask import Flask, abort, flash, redirect, render_template, request, url_for, jsonify, make_response, session
 from os import environ
-from db.schema import db, User, Category, Product, Order, Order_item, Review
+from db.schema import Review, db, User, Category, Product, Order, Order_item
+
+from random import randint
 
 
 app = Flask(__name__)
@@ -8,41 +11,82 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DB_URL') 
 app.secret_key = 'D0018E' # så att flash fungerar
 
+descriptions_clothes = ['This is a great product made of 100% cotton', 'This is a fantastic product made of 100% wool',
+                        'This is a quality product made out of the finest merinowool',
+                        'This is a superb product made out of a blend consisting of 50% wool and 50% polyester ',
+                        'This is an excellent product made out of plolyester and cotton', 'This is a quality product made out of the finest materials',]
+
+descriptions_things = ['This is a great product', 'This is a fantastic product', 'This is a superb product made out of quality goods',
+                       'This is an excellent product made out of the finest materials', 'This is a quality product made out of the finest materials',
+                       'This is a superb product made out of the finest materials', 'This is a great product made out of the finest materials']
+
 def create_tables():
     with app.app_context():
         db.init_app(app)
         db.create_all()
+        images_folder = os.path.join(os.path.dirname(__file__), 'static/images')
+        try:
+            print('Adding default entries')
+            # Loops through all the folders in the images folder and creates categories in the database
+            for category_name in os.listdir(images_folder):
+                category_path = os.path.join(images_folder, category_name)
+                if os.path.isdir(category_path):
+                    category = Category.query.filter_by(category_name=category_name).first()
+                    if category is None:
+                        print('adding a category')
+                        category = Category(category_name=category_name, parent_category_id=None)
+                        db.session.add(category)
+                        db.session.commit()
+                    # Loops through all the files in the category folder and creates products in the database
+                    for product_name in os.listdir(category_path):
+                        product_path = os.path.join(category_path, product_name)
+                        if os.path.isfile(product_path):
+                            print('product!')
+                            product_name_no_ext = os.path.splitext(product_name)[0]  # Remove the file extension from the product name
+                            product = Product.query.filter_by(name=product_name_no_ext).first()
+                        # Check if the product already exists in the database and if the category is clothes    
+                        if product is None and category_name in ['pants', 't-shirts', 'socks']:
+                            print('product!!')
+                            try:
+                                image_path = os.path.join('images', category_name, product_name)
+                                print('Adding products')
+                                product = Product(name=product_name_no_ext, price=randint(99, 149), description=descriptions_clothes[randint(0,5)], image=image_path, quantity=randint(2,5), category_id=category.id)
+                                db.session.add(product)
+                                db.session.commit()
+                            except Exception as e:
+                                print(f"Error while adding product {product_name_no_ext}: {e}")
+                                db.session.rollback() 
 
-        # Add default entries if they're not already in the database
-        if not User.query.first() and not Product.query.first() and not Category.query.first() and not Review.query.first():
-            try:
-                category1 = Category(category_name ='T-Shirts', parent_category_id = None)
-                db.session.add(category1)
-                db.session.commit()
+                        # Check if the product already exists in the database and if the category is things
+                        elif product is None and category_name in ['misc', 'music', 'shoes', 'toys']:
+                            print('product!!!')
+                            try:
+                                image_path = os.path.join('images', category_name, product_name)
+                                print('product things')
+                                product = Product(name=product_name_no_ext, price=randint(49,99), description=descriptions_things[randint(0,6)], image=image_path, quantity=randint(5,10), category_id=category.id)
+                                db.session.add(product)
+                                db.session.commit()
+                            except Exception as e:
+                                print(f"Error while adding product {product_name_no_ext}: {e}")
+                                db.session.rollback()         
 
-                product1 = Product(name ='T-Shirt', price =25.00, description ='This is a T-Shirt.', image ='images/t-shirts/shrek_t-shirts_1.png', quantity =10, category_id=category1.id)
-                db.session.add(product1)
-                product2 = Product(name ='Shrek running t-shirt', price =50.00, description ='This is a T-Shirt of Shrek running.', image ='images/t-shirts/shrek_t-shirts_2.png', quantity =30, category_id=category1.id)
-                db.session.add(product2)
-                product3 = Product(name ='Cool Shrek t-shirt', price =125.00, description ='This is a T-Shirt of Shrek being cool.', image ='images/t-shirts/shrek_t-shirts_3.png', quantity =5, category_id=category1.id)
-                db.session.add(product3)
-                db.session.commit()
 
-                admin = User(name='admin', email='admin@shrek.com', password='abc123', admin=True)
-                db.session.add(admin)
-                db.session.commit()
+            admin = User(name='admin', email='admin@shrek.com', password='abc123', admin=True)
+            db.session.add(admin)
+            db.session.commit()
 
-                review = Review(product_id=product1.id, user_id=admin.id, rating=5, comment='This is a great product')
-                db.session.add(review)
-                db.session.commit()
-
-                print('Default entries added successfully')
-            
-            except Exception as e:
-                print('Error occured:', e)
+            print('Default entries added successfully')
+        
+        except Exception as e:
+            print('Didnt work', e)
 
 create_tables()
 
+
+'''====== Get prodcuts to display at new arrivals ====='''
+def get_new_arrivals():
+    products = Product.query.order_by(Product.id.desc()).limit(10).all()
+    return products
 
 '''
 = Create a new order item and add to cart =
@@ -92,7 +136,8 @@ def create_orderItem() -> str:
 '''Return the home page'''
 @app.route('/')
 def Home():
-    return 'Home Page test'
+    new_arrivals = get_new_arrivals()
+    return render_template("homepage.html", new_arrivals=new_arrivals)
 
 '''Return the all products page'''
 @app.route('/products')
@@ -123,10 +168,11 @@ category_name: name of the category
 def Specific_category(category_name) -> str:
     # get category from the database
     try:
-        category = Category.query.filter_by(category_name=category_name).first()
+        category = Category.query.filter(Category.category_name.ilike(category_name)).first()
         if category is None:
             return "Category not found"
-        return render_template("show_category.html", category=category)
+        products = Product.query.filter_by(category_id=category.id).all()
+        return render_template("show_category.html", category=category, products=products)
     except Exception as e:
         return make_response(jsonify({'message': 'error finding category', 'error': str(e)}), 404)
 
@@ -154,6 +200,7 @@ def Login() -> str:
                 session['logged_in'] = True
                 session['user_id'] = user.id
                 session['username'] = user.name
+                session['admin'] = user.admin
                 return make_response(jsonify({'message': 'Successfully logged in', 'username': user.name}), 200)
             else:
                 return make_response(jsonify({'message': 'Wrong password'}), 401)
@@ -274,7 +321,22 @@ def Checkout():
 '''Return the admin page'''
 @app.route('/admin_console')
 def Admin():
-    return render_template("admin_console.html")
+    orders = db.session.query(Order, User).join(User, Order.user_id == User.id).all()
+    product = Product.query.all()
+    user = User.query.all()
+    if not session.get('logged_in') or not session.get('admin'):
+        return redirect(url_for('Home'))
+    else:
+        return render_template('admin.html', users=user, products=product, orders=orders)
+
+'''Delete a user'''
+@app.route('/delete_user/<id>', methods=['POST'])
+def delete_user(id):
+    user = User.query.get(id)
+    if user:
+        db.session.delete(user)
+        db.session.commit()
+    return redirect(url_for('Admin')) 
 
 '''Logout the user'''
 @app.route('/logout', methods=['GET'])
@@ -380,8 +442,8 @@ def search(search_term):
     try:
         products = Product.query.filter(Product.name.ilike('%' + search_term + '%')).all()
         if len(products) > 0:
-            return render_template("search_results.html", products=products)
-        return render_template("search_results.html", products=None)
+            return render_template("search_results.html", products=products, search_term=search_term)
+        return render_template("search_results.html", products=None, search_term=search_term)
     except Exception as e:
         return make_response(jsonify({'message': 'error searching', 'error': str(e)}), 500)
 
