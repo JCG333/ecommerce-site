@@ -50,13 +50,14 @@ function logout_redirect() {
         })
         // if OK
         .then(data => {
-            document.getElementById('orderItem_creation_action_response').textContent = 'logout success!';
+            showError('User logged out successfully!', true);
             document.getElementById('user-name').textContent = '';
             updateCartNotification();
+            admin_button_status();
         })
         // Error handling
         .catch(error => {
-            document.getElementById('orderItem_creation_action_response').textContent = error.message;
+            showError(error.message, false);
         });
 }
 // event lisenter for logo redirect
@@ -87,13 +88,14 @@ function login(email, password) {
         })
         // if OK
         .then(data => {
-            document.getElementById('orderItem_creation_action_response').textContent = 'User logged in successfully!';
+            showError('User logged in successfully!', true);
             document.getElementById('user-name').textContent = data.username; // Display the user's name
             updateCartNotification();
+            admin_button_status();
         })
         // Error handling
         .catch(error => {
-            document.getElementById('orderItem_creation_action_response').textContent = error.message;
+            showError(error.message, false);
         });
 }
 
@@ -227,12 +229,12 @@ function updateUserCred(name, email, password) {
         })
         // if OK
         .then(data => {
-            document.getElementById('orderItem_creation_action_response').textContent = 'User updated successfully!';
+            showError('user updated successfully!', true);
             document.getElementById('user-name').textContent = name; // Display the user's name
         })
         // Error handling
         .catch(error => {
-            document.getElementById('orderItem_creation_action_response').textContent = error.message;
+            showError(error.message, false);
         });
 
 }
@@ -273,6 +275,45 @@ function updateOrderTotal() {
         });
 }
 
+// =================== admin button =====================
+function admin_button_status() {
+    fetch('/get_user_role')
+        .then(response => response.json())
+        .then(data => {
+            if (data.role === true) {
+                console.log('admin');
+                document.getElementById('console-button').style.display = 'block';
+            }
+            else {
+                console.log('not admin');
+                document.getElementById('console-button').style.display = 'none';
+            }
+        });
+}
+// event listener for admin button
+document.getElementById('console-button').addEventListener('click', function () {
+    window.location.href = '/admin_console';
+});
+
+/*----- error message -----*/
+function showError(message, status_code) {
+    var errorMessage = document.getElementById('error-message');
+    if (!status_code) {
+        errorMessage.innerHTML = '<p>Error: ' + message + '</p>';
+        errorMessage.classList.remove('sucess-message');
+        errorMessage.classList.add('error-message');
+        errorMessage.style.display = 'block'; // Show the error message
+    } else {
+        errorMessage.innerHTML = '<p>Success: ' + message + '</p>';
+        errorMessage.classList.remove('error-message');
+        errorMessage.classList.add('success-message');
+        errorMessage.style.display = 'block'; // Show the success message
+    }
+    // Hide the error message after 5 seconds
+    setTimeout(function () {
+        errorMessage.style.display = 'none';
+    }, 5000);
+}
 
 window.onload = function () {
     fetch('/get_username')
@@ -287,4 +328,5 @@ window.onload = function () {
         });
     updateCartNotification();
     updateOrderTotal();
+    admin_button_status();
 };

@@ -1,9 +1,24 @@
 :root {
-    --primary-color: #f5f2ee;
-    --secondary-color: #e6e5e1;
-    --button-color: #3f3f3f;
-    --button-hover-color: #2a2a2a;
-    --border-color: #545454;
+    /* ----- LAYOUT ----- */
+    --primary-color: #ffffff;
+    --secondary-color: #1687a7;
+    --primary-accent-color: #1687a7;
+
+    /* ----- TEXT ----- */
     --primary-text-color: #2a2a2a;
+    --secondary-text-color: #ffffff;
+
+    /* ----- BUTTON ----- */
+    --button-color: #1687a7;
+    --button-hover-color: #12657b;
+
+    /* ----- HEADER ----- */
+    --primary-search-bar-color: #f5f5f5;
+    --secondary-search-bar-color: #cbcbcb;
+    --header-border-color: #e4e4e4;
+
+    /* ----- (PRODUCT PAGE) ----- */
+    --review-container-color: #F5FDFF;
+
     /* Add more color variables as needed */
 }

@@ -25,7 +25,7 @@ function add_to_order(id, quantity) {
         })
         // Error handling
         .catch(error => {
-            showError(error.message, false);
+
         });
 }
 // event lisenter for creating orderItem button
@@ -121,9 +121,10 @@ function logout_redirect() {
         })
         // if OK
         .then(data => {
-            showError('logout success!', true);
+            showError('User logged out successfully!', true);
             document.getElementById('user-name').textContent = '';
             updateCartNotification();
+            admin_button_status();
         })
         // Error handling
         .catch(error => {
@@ -161,6 +162,7 @@ function login(email, password) {
             showError('User logged in successfully!', true);
             document.getElementById('user-name').textContent = data.username; // Display the user's name
             updateCartNotification();
+            admin_button_status();
         })
         // Error handling
         .catch(error => {
@@ -391,6 +393,9 @@ function updateCartNotification() {
     fetch('/order_size')
         // check if response is OK
         .then(response => {
+            if (!response.ok) {
+                return response.json().then(error => Promise.reject(error));
+            }
             return response.json();
         })
         // if OK
@@ -406,6 +411,26 @@ function updateCartNotification() {
             console.log('Error fetching order size: ' + error);
         });
 }
+
+// =================== admin button =====================
+function admin_button_status() {
+    fetch('/get_user_role')
+        .then(response => response.json())
+        .then(data => {
+            if (data.role === true) {
+                console.log('admin');
+                document.getElementById('console-button').style.display = 'block';
+            }
+            else {
+                console.log('not admin');
+                document.getElementById('console-button').style.display = 'none';
+            }
+        });
+}
+// event listener for admin button
+document.getElementById('console-button').addEventListener('click', function () {
+    window.location.href = '/admin_console';
+});
 
 /*----- error message -----*/
 function showError(message, status_code) {
@@ -442,4 +467,6 @@ window.onload = function () {
     var productId = document.querySelector('.product-container').dataset.productId;
     updateAverageRating(productId);
     updateCartNotification();
+    admin_button_status();
+
 };

@@ -7,74 +7,93 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='CSS/account.css') }}">
     <!-- Link to the JavaScript file -->
     <script src="{{ url_for('static', filename='JS/account.js') }}" defer></script>
+    <!-- Icon library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- other devices -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
-<!--- UNIVERSAL -->
+<!--- =========== HEADER =========== -->
 
-<!-- The header contains the logo, search bar, user name, login form and cart -->
 <header>
-    <div id="left-nav">
-        <!-- Logo -->
-        <a href="#" id="logo"><img src="{{ url_for('static', filename='images/admin/home_icon.png') }}" alt="Logo"></a>
+    <!------ HEADER BANNER ------>
+    <div id="header-banner">
+        <p>Free shipping over $50</p>
+        <p>30 day returns</p>
+        <p>Monthly deals</p>
     </div>
 
-    <!-- Navigation items-->
-    <div id="navigation">
-        <!-- Search bar -->
-        <input type="search" id="search" placeholder="Search...">
+    <!------ LOWER HEADER SECTION ------>
+    <div id="lower-header">
 
-        <!-- Categories -->
-        <nav>
-            <ul id="categoriesList">
-                <li><a href="#">T-Shirts</a></li>
-                <li><a href="#">Pants</a></li>
-                <li><a href="#">Shoes</a></li>
-                <li><a href="#">Socks</a></li>
-                <li><a href="#">Toys</a></li>
-                <li><a href="#">Music</a></li>
-                <li><a href="#">Misc</a></li>
-            </ul>
-        </nav>
-    </div>
+        <!------ LEFT NAVIGATION ------>
 
-    <!-- Login -->
-    <div id="right-nav">
-        <!-- Users name -->
-        <span id="user-name"></span> <!-- Placeholder for the user's name -->
-
-        <!-- Login dropdown -->
-        <div class="dropdown">
-            <!-- login icon -->
-            <a href="#" id="account-icon"><img src="{{ url_for('static', filename='images/admin/account_icon.png') }}"
-                    alt="Account"></a>
-            <!-- dropdown -->
-            <div id="loginDropdown" class="dropdown-content">
-                <form id="loginForm">
-                    <label for="email">Email:</label>
-                    <br>
-                    <input type="email" id="email" name="email" required>
-                    <label for="password">Password:</label>
-                    <br>
-                    <input type="password" id="password" name="password" required>
-                    <input id="login_button" type="submit" value="Login">
-                    <input id="register_button" type="button" value="Register">
-                </form>
-                <a id="account-link" href="#">My account</a>
-                <a id="logout-link" href="#">Logout</a>
-            </div>
+        <div id="left-nav">
+            <a href="#" id="logo"><i class="fas fa-home"></i></a>
         </div>
 
-        <!-- cart icon -->
-        <a href="#" id="cart"><img src="{{ url_for('static', filename='images/admin/cart_icon.png') }}" alt="Cart"></a>
-        <div id="round-div">0</div>
+        <!------ MIDDLE NAVIGATION ------>
+        <div id="navigation">
+
+            <input type="search" id="search" placeholder="Search for a product">
+
+            <nav>
+                <ul id="categoriesList">
+                    <li><a href="#">T-SHIRTS</a></li>
+                    <li><a href="#">PANTS</a></li>
+                    <li><a href="#">SHOES</a></li>
+                    <li><a href="#">SOCKS</a></li>
+                    <li><a href="#">TOYS</a></li>
+                    <li><a href="#">MUSIC</a></li>
+                    <li><a href="#">MISC</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <!------ RIGHT NAVIGATION ------>
+        <div id="right-nav">
+            <div id="right-header-content">
+
+                <button id="console-button">Console</button>
+
+                <span id="user-name"><!-- users name will be displayed here --></span>
+
+                <!------ LOGIN DROPDOWN ------>
+                <div class="dropdown">
+
+                    <a href="#" id="account-icon"><i class="fas fa-user"></i></a>
+
+                    <div id="loginDropdown" class="dropdown-content">
+
+                        <form id="loginForm">
+                            <label for="email">Email:</label>
+                            <br>
+                            <input type="email" id="email" name="email" required>
+                            <label for="password">Password:</label>
+                            <br>
+                            <input type="password" id="password" name="password" required>
+                            <input id="login_button" type="submit" value="Login">
+                            <input id="register_button" type="button" value="Register">
+                        </form>
+
+                        <a id="account-link" href="#">My account</a>
+
+                        <a id="logout-link" href="#">Logout</a>
+                    </div>
+                </div>
+
+                <a href="#" id="cart"><i class="fas fa-shopping-cart"></i></a>
+
+                <div id="round-div">0</div>
+            </div>
+        </div>
     </div>
 </header>
 
-<!--- SPECIFIC -->
+<!--- >>>>>>> PRODUCT SPECIFIC ELEMENTS <<<<<<< -->
 
 <body>
-
+    <!------ ACCOUNT CREDENTIALS ------>
     <div class="account-info">
         <div id="name-container">
             <h1>{{user.name}}</h1>
@@ -92,6 +111,7 @@
         </div>
     </div>
 
+    <!------ ORDERS ------>
     <div class="orders" data-order-id="{{order.id}}">
         <div class="order-summary">
             <button id="show-order-button">Show Order items</button>
@@ -105,12 +125,16 @@
         <p id="no-results-text">No orders</p>
         {% endif %}
     </div>
-    <div id="orderItem_creation_action_response"></div>
+
+    <!---- ERROR CONTAINER ---->
+    <div id="error-message">
+        <p> </p>
+    </div>
 </body>
 
-<!--- UNIVERSAL -->
-
-<!-- The footer contains the copy right text -->
+<!--- =========== FOOTER =========== -->
 <footer>
     <p>© 2022 Shreek shop. All rights reserved.</p>
 </footer>
+
+</html>

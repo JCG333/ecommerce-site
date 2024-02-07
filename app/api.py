@@ -272,9 +272,9 @@ def Checkout():
     return 'Checkout Page'
 
 '''Return the admin page'''
-@app.route('/admin')
+@app.route('/admin_console')
 def Admin():
-    return 'Admin Page'
+    return render_template("admin_console.html")
 
 '''Logout the user'''
 @app.route('/logout', methods=['GET'])
@@ -293,6 +293,16 @@ def login_status():
     else:
         return make_response(jsonify({'message': 'Please log in before accessing the resource.'}), 401)
     
+'''get user role'''
+@app.route('/get_user_role', methods=['GET'])
+def get_user_role():
+    if 'logged_in' in session:
+        user = User.query.filter_by(id=session['user_id']).first()
+        return make_response(jsonify({'role': user.admin}), 200)
+    else:
+        return make_response(jsonify({'role': None}), 200)
+    
+
 '''
 = Return reviews for a specific product =
 product_id: id of the product
