@@ -1,0 +1,524 @@
+@import 'colors.css';
+
+/* ============ TABLE OF CONTENTS ============ 
+    1. LAYOUT
+    2. DECORATION
+    3. ICONS
+    4. SEARCH
+    5. CATEGORIES
+    6. LOGIN FORM
+    7. ERROR/SUCCESS MESSAGE
+    8. ACCOUNT SPECIFIC LAYOUT ELEMENTS
+    9. ORDERS
+
+    Note: use (!) to quickly search for sections (ex. !LAYOUT)
+*/
+
+/* ============ !LAYOUT ============ */
+
+body {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: var(--primary-text-color);
+    background-color: #ffffff;
+    flex-direction: column;
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+/* ------------ !HEADER ------------ */
+
+header {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    max-width: 100%;
+}
+
+#header-banner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--secondary-color);
+    height: 25px;
+}
+
+#right-header-content {
+    display: flex;
+    flex-direction: row;
+    align-items: right;
+    gap: 30px;
+    max-height: 100%;
+    margin-right: 30px;
+    margin-bottom: 20px;
+
+}
+
+#lower-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 90px;
+    padding: 30px 0px 10px 10px;
+    background-color: var(--primary-color);
+    border-bottom: 1.5px solid var(--header-border-color);
+    max-width: 100vw;
+}
+
+#navigation {
+    display: flex;
+    flex-direction: column;
+    max-width: 60%;
+    height: 100%;
+    align-items: center;
+}
+
+#right-nav {
+    display: flex;
+    flex-direction: row;
+    min-width: 30%;
+    max-width: 30%;
+    height: 100%;
+    align-items: right;
+    justify-content: right;
+}
+
+#left-nav {
+    display: flex;
+    flex-direction: row;
+    min-width: 30%;
+    max-width: 30%;
+    align-items: left;
+    height: 100%;
+}
+
+/* ------------ !FOOTER ------------ */
+
+footer {
+    background-color: var(--secondary-color);
+    color: var(--secondary-text-color);
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    max-width: 100vw;
+    position: static;
+}
+
+footer p {
+    margin: 0;
+}
+
+/* >>> ACCOUNT SPECIFIC LAYOUT ELEMENTS <<< */
+
+#cred-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.orders {
+    margin-top: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 65vh;
+}
+
+#content-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+}
+
+/* ============ !DECORATION ============ */
+
+
+#header-banner p {
+    color: var(--secondary-text-color);
+    text-decoration: none;
+    margin-left: 30px;
+    margin-right: 30px;
+}
+
+/* ------------ !ICONS ------------ */
+
+#logo i {
+    font-size: 35px;
+    margin-bottom: 40px;
+    margin-left: 20px;
+    color: var(--primary-accent-color);
+}
+
+#cart i {
+    font-size: 35px;
+    color: var(--primary-accent-color);
+}
+
+#account-icon i {
+    font-size: 35px;
+    color: var(--primary-accent-color);
+}
+
+#account-icon i:hover,
+#cart i:hover,
+#logo i:hover {
+    color: var(--button-hover-color);
+}
+
+#round-div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 20px;
+    height: 20px;
+    background-color: rgb(18, 132, 20);
+    color: white;
+    position: absolute;
+    right: 20px;
+    top: 33%;
+    border-radius: 50%;
+}
+
+#user-name {
+    font-size: 1.2em;
+    color: var(--primary-accent-color);
+    margin-top: 6px;
+    min-width: 100px;
+    text-align: right;
+}
+
+#console-button {
+    width: 100px;
+    background-color: var(--primary-color);
+    border: 2px solid var(--button-color);
+    color: var(--button-color);
+
+    cursor: pointer;
+    padding-bottom: 2px;
+    border-radius: 5px;
+    font-size: 1em;
+    height: 40px;
+}
+
+#console-button:hover {
+    background-color: var(--button-color);
+    color: var(--primary-color);
+}
+
+/* ------------ !SEARCH ------------ */
+
+#search {
+    flex-grow: 2;
+    width: 80%;
+    margin: auto;
+    max-height: 90%;
+    background-color: var(--primary-search-bar-color);
+    padding: 10px;
+    border: 0px solid var(--primary-accent-color);
+    border-radius: 20px;
+    font-size: medium;
+}
+
+#search::placeholder {
+    color: var(--secondary-search-bar-color);
+    font-size: medium;
+}
+
+#search:focus {
+    outline: none;
+}
+
+#search:focus::placeholder {
+    color: transparent;
+}
+
+/* ------------ !CATEGORIES ------------ */
+
+#categoriesList {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+#categoriesList li a:hover {
+    font-weight: bold;
+}
+
+#categoriesList li {
+    float: left;
+}
+
+#categoriesList li a {
+    display: block;
+    color: var(--primary-accent-color);
+    text-align: center;
+    padding: 14px 8px;
+    min-width: 75px;
+    max-width: 75px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* ------------ !LOGIN FORM ------------ */
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: var(--primary-color);
+    min-width: 200px;
+    padding: 30px;
+    margin-top: 62px;
+    z-index: 1;
+    border-left: 1.5px solid var(--header-border-color);
+    border-bottom: 1.5px solid var(--header-border-color);
+    border-right: 1.5px solid var(--header-border-color);
+}
+
+#login_button,
+#register_button {
+    width: 80px;
+    background-color: var(--button-color);
+    border: 0px solid #ddd;
+    color: white;
+    cursor: pointer;
+    padding: 12px;
+    border-radius: 25px;
+    font-size: 1em;
+    margin-top: 20px;
+}
+
+#register_button {
+    margin-left: 15%;
+}
+
+#login_button:hover,
+#register_button:hover {
+    background-color: var(--button-hover-color);
+}
+
+#password,
+#email {
+    border: 0px solid var(--header-border-color);
+    border-radius: 20px;
+    padding: 7px;
+    width: 90%;
+    background-color: var(--primary-search-bar-color);
+    font-size: medium;
+}
+
+#password:focus,
+#email:focus {
+    outline: none;
+}
+
+#account-link,
+#logout-link {
+    display: block;
+    color: var(--primary-text-color);
+    text-align: center;
+    padding: 15px 0px 0px 0px;
+    text-decoration: none;
+}
+
+#account-link:hover,
+#logout-link:hover {
+    text-decoration: underline;
+}
+
+/* ------------ !ERROR/SUCCESS MESSAGE ------------ */
+
+.error-message {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #bc4f4f;
+    color: white;
+    padding: 5px;
+    height: 5%;
+    text-align: center;
+    z-index: 9999;
+    display: none;
+    position: sticky;
+    bottom: 0;
+}
+
+.success-message {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgb(18, 132, 20);
+    color: white;
+    padding: 5px;
+    height: 5%;
+    text-align: center;
+    z-index: 9999;
+    display: none;
+    position: sticky;
+    bottom: 0;
+}
+
+/* >>> ACCOUNT SPECIFIC LAYOUT ELEMENTS <<< */
+
+/* ------------ !ACCOUNT CREDENTIALS ------------ */
+
+#account-email,
+#account-name,
+#account-password {
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border: 0px solid var(--border-color);
+    border-radius: 20px;
+    padding: 10px;
+    width: 90%;
+    background-color: var(--primary-search-bar-color);
+    max-height: 90%;
+    font-size: medium;
+}
+
+
+
+#account-cred {
+    width: 25%;
+}
+
+#name-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+#account-email::placeholder,
+#account-name::placeholder,
+#account-password::placeholder {
+    color: var(--secondary-search-bar-color);
+    font-size: medium;
+}
+
+#account-email:focus,
+#account-name:focus,
+#account-password:focus {
+    outline: none;
+}
+
+#account-email:focus::placeholder,
+#account-name:focus::placeholder,
+#account-password:focus::placeholder {
+    color: transparent;
+}
+
+#update-cred-button:hover {
+    background-color: var(--button-hover-color);
+}
+
+#update-cred-button {
+    background-color: var(--button-color);
+    border: 0px solid #ddd;
+    color: white;
+    cursor: pointer;
+    padding: 13px;
+    border-radius: 30px;
+    font-size: 1em;
+    margin-top: 10px;
+    width: 100px;
+    margin-right: 45%;
+}
+
+/* ------------ !ORDERS ------------ */
+
+.order-summary {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    max-width: 40%;
+    border-bottom: 1.5px solid var(--header-border-color);
+    width: 100%;
+    padding-bottom: 15px;
+}
+
+#show-order-button:hover {
+    background-color: var(--button-hover-color);
+}
+
+#show-order-button {
+    background-color: var(--button-color);
+    border: 0px solid #ddd;
+    color: white;
+    cursor: pointer;
+    padding: 13px;
+    border-radius: 30px;
+    font-size: 1em;
+    margin-top: 10px;
+    width: 170px;
+    margin-right: 45%;
+}
+
+#order-items {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-width: 40%;
+    width: 100%;
+    max-height: 300px;
+    margin-bottom: 200px;
+}
+
+.product-item {
+    display: flex;
+    padding: 5px;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.product-item img {
+    width: 100px;
+    height: auto;
+}
+
+.product-name {
+    display: flex;
+    max-width: 60%;
+    width: 100%;
+    font-weight: bold;
+    color: var(--primary-text-color);
+    padding-left: 10px;
+}
+
+#total-price {
+    font-weight: bold;
+    margin-bottom: -15px;
+}
+
+.price {
+    color: var(--primary-text-color);
+    font-weight: bold;
+    align-self: right;
+    min-width: 5%;
+}
+
+.quantity {
+    padding-left: 10px;
+    color: var(--primary-text-color);
+}

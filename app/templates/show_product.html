@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{{product.name}}</title>
+    <!-- Link to the CSS file -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='CSS/show_product.css') }}">
+    <!-- Link to the JavaScript file -->
+    <script src="{{ url_for('static', filename='JS/show_product.js') }}" defer></script>
+    <!-- Icon library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- other devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<!--- =========== HEADER =========== -->
+
+<header>
+    <!------ HEADER BANNER ------>
+    <div id="header-banner">
+        <p>Free shipping over $50</p>
+        <p>30 day returns</p>
+        <p>Monthly deals</p>
+    </div>
+
+    <!------ LOWER HEADER SECTION ------>
+    <div id="lower-header">
+
+        <!------ LEFT NAVIGATION ------>
+
+        <div id="left-nav">
+            <a href="#" id="logo"><i class="fas fa-home"></i></a>
+        </div>
+
+        <!------ MIDDLE NAVIGATION ------>
+        <div id="navigation">
+
+            <input type="search" id="search" placeholder="Search for a product">
+
+            <nav>
+                <ul id="categoriesList">
+                    <li><a href="#">T-SHIRTS</a></li>
+                    <li><a href="#">PANTS</a></li>
+                    <li><a href="#">SHOES</a></li>
+                    <li><a href="#">SOCKS</a></li>
+                    <li><a href="#">TOYS</a></li>
+                    <li><a href="#">MUSIC</a></li>
+                    <li><a href="#">MISC</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <!------ RIGHT NAVIGATION ------>
+        <div id="right-nav">
+            <div id="right-header-content">
+
+                <button id="console-button">Console</button>
+
+                <span id="user-name"><!-- users name will be displayed here --></span>
+
+                <!------ LOGIN DROPDOWN ------>
+                <div class="dropdown">
+
+                    <a href="#" id="account-icon"><i class="fas fa-user"></i></a>
+
+                    <div id="loginDropdown" class="dropdown-content">
+
+                        <form id="loginForm">
+                            <label for="email">Email:</label>
+                            <br>
+                            <input type="email" id="email" name="email" required>
+                            <label for="password">Password:</label>
+                            <br>
+                            <input type="password" id="password" name="password" required>
+                            <input id="login_button" type="submit" value="Login">
+                            <input id="register_button" type="button" value="Register">
+                        </form>
+
+                        <a id="account-link" href="#">My account</a>
+
+                        <a id="logout-link" href="#">Logout</a>
+                    </div>
+                </div>
+
+                <a href="#" id="cart"><i class="fas fa-shopping-cart"></i></a>
+
+                <div id="round-div">0</div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!--- >>>>>>> PRODUCT SPECIFIC ELEMENTS <<<<<<< -->
+
+<body>
+    <!------ MAIN CONTENT CONTAINER ------>
+    <div id="content-container">
+
+        <!------ PRODUCT ------>
+        <div class="product-container" data-product-id="{{product.id}}">
+
+            <img class="product-image" src="{{ url_for('static', filename=product.image) }}" alt="{{product.name}}">
+
+            <div class="product-details">
+                <h1>{{product.name}}</h1>
+                <p id="average_rating">Average Rating: </p>
+                <p>{{product.description}}</p>
+                <p id="price_tag">${{product.price}}</p>
+                <form id="add-to-cart-form">
+                    <input type="number" id="quantity" name="quantity" min="1" max="{{product.quantity}}" value="1">
+                    <button id="create_orderItem_button" type="submit" data-id="{{product.id}}">Add to Cart</button>
+                </form>
+            </div>
+        </div>
+
+        <!------ REVIEWS ------>
+        <div class="review-container" data-review-id="{{product.id}}">
+
+            <form id="review-form">
+                <label id="review_title" for="review">Review the product</label>
+                <br>
+                <textarea id="review" name="review" rows="4" cols="50" required placeholder="Write a review"></textarea>
+                <br>
+                <div id="rating-box">
+                    <label for="rating">Rating:</label><br>
+                    <input type="radio" id="1" name="rating" value="1">
+                    <label for="1">1</label><br>
+                    <input type="radio" id="2" name="rating" value="2">
+                    <label for="2">2</label><br>
+                    <input type="radio" id="3" name="rating" value="3">
+                    <label for="3">3</label><br>
+                    <input type="radio" id="4" name="rating" value="4">
+                    <label for="4">4</label><br>
+                    <input type="radio" id="5" name="rating" value="5">
+                    <label for="5">5</label><br>
+                </div>
+                <input id="create_review_button" type="submit" value="Submit">
+            </form>
+
+            <button id="reviewsButton">Show reviews</button>
+            <br>
+            <div id="reviewsDropdown" class="dropdown-review-content">
+                <!-- Reviews will be added here -->
+            </div>
+        </div>
+    </div>
+
+    <!------ ERROR MESSAGE ------>
+    <div id="error-message">
+        <p> </p>
+    </div>
+
+</body>
+
+<!--- =========== FOOTER =========== -->
+
+<footer>
+    <p>© 2022 Shreek shop. All rights reserved.</p>
+</footer>
+
+</html>

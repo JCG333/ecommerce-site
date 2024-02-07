@@ -16,8 +16,7 @@ COPY . /app
 # List the contents of the /app directory
 RUN ls /app
 
-# Expose a port (vet inte denna: 4000 för dev)
-EXPOSE 4000
-
+# Expose a port 
+EXPOSE 8000
 
 CMD ["python", "api.py"]

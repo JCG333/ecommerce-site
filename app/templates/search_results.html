@@ -1,0 +1,132 @@
+<!-- search_results.html -->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Product Search Results</title>
+    <!-- Link to the CSS file -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='CSS/search_results.css') }}">
+    <!-- Link to the JavaScript file -->
+    <script src="{{ url_for('static', filename='JS/search_results.js') }}" defer></script>
+    <!-- Icon library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- other devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<!--- =========== HEADER =========== -->
+
+<header>
+    <!------ HEADER BANNER ------>
+    <div id="header-banner">
+        <p>Free shipping over $50</p>
+        <p>30 day returns</p>
+        <p>Monthly deals</p>
+    </div>
+
+    <!------ LOWER HEADER SECTION ------>
+    <div id="lower-header">
+
+        <!------ LEFT NAVIGATION ------>
+
+        <div id="left-nav">
+            <a href="#" id="logo"><i class="fas fa-home"></i></a>
+        </div>
+
+        <!------ MIDDLE NAVIGATION ------>
+        <div id="navigation">
+
+            <input type="search" id="search" placeholder="Search for a product">
+
+            <nav>
+                <ul id="categoriesList">
+                    <li><a href="#">T-SHIRTS</a></li>
+                    <li><a href="#">PANTS</a></li>
+                    <li><a href="#">SHOES</a></li>
+                    <li><a href="#">SOCKS</a></li>
+                    <li><a href="#">TOYS</a></li>
+                    <li><a href="#">MUSIC</a></li>
+                    <li><a href="#">MISC</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <!------ RIGHT NAVIGATION ------>
+        <div id="right-nav">
+            <div id="right-header-content">
+
+                <button id="console-button">Console</button>
+
+                <span id="user-name"><!-- users name will be displayed here --></span>
+
+                <!------ LOGIN DROPDOWN ------>
+                <div class="dropdown">
+
+                    <a href="#" id="account-icon"><i class="fas fa-user"></i></a>
+
+                    <div id="loginDropdown" class="dropdown-content">
+
+                        <form id="loginForm">
+                            <label for="email">Email:</label>
+                            <br>
+                            <input type="email" id="email" name="email" required>
+                            <label for="password">Password:</label>
+                            <br>
+                            <input type="password" id="password" name="password" required>
+                            <input id="login_button" type="submit" value="Login">
+                            <input id="register_button" type="button" value="Register">
+                        </form>
+
+                        <a id="account-link" href="#">My account</a>
+
+                        <a id="logout-link" href="#">Logout</a>
+                    </div>
+                </div>
+
+                <a href="#" id="cart"><i class="fas fa-shopping-cart"></i></a>
+
+                <div id="round-div">0</div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!--- >>>>>>> PRODUCT SPECIFIC ELEMENTS <<<<<<< -->
+
+<body>
+    <!------ PRODUCTS ------>
+    <h1 id="product_title">Results for "{{search_term}}"</h1>
+    <div class="results-container">
+        {% if products %}
+        {% for product in products %}
+        <div class="product" data-product-id="{{product.id}}">
+            <a href="/products/{{product.id}}">
+                <img class="product-image" src="{{ url_for('static', filename=product.image) }}" alt="{{product.name}}">
+                <div>
+                    <p class="name">{{ product.name }}</p>
+                    <p class="average_rating"> (no reviews yet)</p>
+                    <p class="price">${{ product.price }}</p>
+                    <p class="lager-status">In stock: {{ product.quantity }}</p>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p id="no-results-text">No results</p>
+        {% endif %}
+    </div>
+
+    <!------ ERROR MESSAGE ------>
+    <div id="error-message">
+        <p> </p>
+    </div>
+</body>
+
+<!--- =========== FOOTER =========== -->
+
+<footer>
+    <p>© 2022 Shreek shop. All rights reserved.</p>
+</footer>
+
+</html>
