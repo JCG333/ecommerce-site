@@ -198,14 +198,29 @@ function updateNumberOfReviews(productId, productElement) {
 // =================== cart notification =====================
 function updateCartNotification() {
     fetch('/order_size')
-        .then(response => response.json())
-        .then(data => {
-            console.log(data.order_size);
-            if (data.order_size > 0) {
-                document.getElementById('round-div').textContent = data.order_size;
-            } else {
-                document.getElementById('round-div').textContent = 0;
+        // check if response is OK
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(error => Promise.reject(error));
             }
+            return response.json();
+        })
+        // if OK
+        .then(data => {
+            if (data.LoggedIn == false) {
+                console.log('not logged in');
+                document.getElementById('round-div').textContent = 0;
+            } else {
+                if (data.order_size > 0) {
+                    document.getElementById('round-div').textContent = data.order_size;
+                } else {
+                    document.getElementById('round-div').textContent = 0;
+                }
+            }
+        })
+        // Error handling
+        .catch(error => {
+            console.log('Error fetching order size: ' + error);
         });
 }
 

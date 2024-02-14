@@ -293,10 +293,10 @@ def update_user() -> str:
 def order_size() -> str:
     try:
         if 'logged_in' not in session:
-            return make_response(jsonify({'message': 'Please log in to view order size'}), 401)
+            return make_response(jsonify({'message': 'Please log in to view order size', 'LoggedIn': False}), 200)
         order = Order.query.filter_by(user_id=session['user_id']).first()
         order_items = Order_item.query.filter_by(order_id=order.id).all()
-        return make_response(jsonify({'order_size': len(order_items)}), 200)
+        return make_response(jsonify({'order_size': len(order_items), 'LoggedIn': True}), 200)
     except Exception as e:
         return make_response(jsonify({'message': 'error getting order size', 'error': str(e)}), 500)
     

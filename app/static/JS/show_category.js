@@ -239,10 +239,15 @@ function updateCartNotification() {
         })
         // if OK
         .then(data => {
-            if (data.order_size > 0) {
-                document.getElementById('round-div').textContent = data.order_size;
-            } else {
+            if (data.LoggedIn == false) {
+                console.log('not logged in');
                 document.getElementById('round-div').textContent = 0;
+            } else {
+                if (data.order_size > 0) {
+                    document.getElementById('round-div').textContent = data.order_size;
+                } else {
+                    document.getElementById('round-div').textContent = 0;
+                }
             }
         })
         // Error handling
