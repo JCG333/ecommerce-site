@@ -246,7 +246,7 @@ def register():
             session['admin'] = user.admin
 
             flash('Successfully registered', 'success')
-            return redirect(url_for('home'))  # Redirect to the login page
+            return redirect(url_for('Home'))  # Redirect to the login page
 
     else:
         return render_template("register.html")
