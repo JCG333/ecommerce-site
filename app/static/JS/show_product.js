@@ -29,9 +29,10 @@ function add_to_order(id, quantity) {
         });
 }
 // event lisenter for creating orderItem button
-document.getElementById('add-to-cart-form').addEventListener('submit', function () {
+document.getElementById('create_orderItem_button').addEventListener('click', function () {
     var quantity = document.getElementById('quantity').value;
     var productId = document.querySelector('.product-container').dataset.productId;
+    console.log('adding to cart...')
     add_to_order(productId, quantity);
     updateCartNotification();
 });

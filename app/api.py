@@ -240,8 +240,13 @@ def register():
             db.session.add(user)
             db.session.commit()
 
+            session['logged_in'] = True
+            session['user_id'] = user.id
+            session['username'] = user.name
+            session['admin'] = user.admin
+
             flash('Successfully registered', 'success')
-            return redirect(url_for('Login'))  # Redirect to the login page
+            return redirect(url_for('home'))  # Redirect to the login page
 
     else:
         return render_template("register.html")
@@ -295,6 +300,8 @@ def order_size() -> str:
         if 'logged_in' not in session:
             return make_response(jsonify({'message': 'Please log in to view order size', 'LoggedIn': False}), 200)
         order = Order.query.filter_by(user_id=session['user_id']).first()
+        if order is None:
+            return make_response(jsonify({'order_size': 0, 'LoggedIn': True}), 200)
         order_items = Order_item.query.filter_by(order_id=order.id).all()
         return make_response(jsonify({'order_size': len(order_items), 'LoggedIn': True}), 200)
     except Exception as e:
@@ -307,6 +314,8 @@ def order_total() -> str:
         if 'logged_in' not in session:
             return make_response(jsonify({'message': 'Please log in to view order total'}), 401)
         order = Order.query.filter_by(user_id=session['user_id']).first()
+        if order is None:
+            return make_response(jsonify({'order_total': 0}), 200)
         order_items = Order_item.query.filter_by(order_id=order.id).all()
         total = sum(order_item.product.price * order_item.quantity for order_item in order_items)
         return make_response(jsonify({'order_total': total}), 200)

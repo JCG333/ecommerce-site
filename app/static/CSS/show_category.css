@@ -203,6 +203,7 @@ footer p {
     border-radius: 5px;
     font-size: 1em;
     height: 40px;
+    display: none;
 }
 
 #console-button:hover {
