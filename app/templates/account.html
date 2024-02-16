@@ -61,7 +61,7 @@
                 <!------ LOGIN DROPDOWN ------>
                 <div class="dropdown">
 
-                    <a href="#" id="account-icon"><i class="fas fa-user"></i></a>
+                    <a id="account-icon"><i class="fas fa-user"></i></a>
 
                     <div id="loginDropdown" class="dropdown-content">
 
@@ -114,11 +114,11 @@
     <!------ ORDERS ------>
     <div class="orders" data-order-id="{{order.id}}">
         <div class="order-summary">
-            <button id="show-order-button">Show Order items</button>
+            <button id="show-order-button">Show Order items </button> 
             <p id="total-price">Order total: </p>
         </div>
         {% if order %}
-        <div id="order-items">
+        <div id="order-items" style="display: none;">
             <!-- order items will be added here -->
         </div>
         {% else %}

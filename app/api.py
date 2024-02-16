@@ -397,7 +397,7 @@ comment: comment of the product
 @app.route('/post_review/<int:id>', methods=['PUT'])
 def post_reviews(id) -> str:
     try:
-        if 'logged_in' not in session:
+        if 'logged_in' in session:
             request.get_json()
             user_id = session['user_id']
             rating = request.json.get('rating')
@@ -406,6 +406,7 @@ def post_reviews(id) -> str:
             db.session.add(review)
             db.session.commit()
             return make_response(jsonify({'message': 'Successfully posted review'}), 200)
+        return make_response(jsonify({'message': 'Please log in to post review'}), 401)
     except Exception as e:
         return make_response(jsonify({'message': 'error posting review', 'error': str(e)}), 500)
 

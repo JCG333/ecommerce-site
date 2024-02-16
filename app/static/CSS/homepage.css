@@ -281,6 +281,8 @@ footer p {
     border-right: 1.5px solid var(--header-border-color);
 }
 
+
+
 #login_button,
 #register_button {
     width: 80px;
