@@ -155,8 +155,9 @@ function search(event) {
 // event listener for search bar
 document.getElementById('search').addEventListener('keypress', search);
 
-function showOrderItems(userID) {
-    fetch('/all_orders/' + userID) // replace with your API endpoint
+//
+function showOrderItems(orderId) {
+    fetch('/order_items/' + orderId) // replace with your API endpoint
         .then(response => response.json())
         .then(data => {
             var orderItems = data.order_items;
@@ -166,7 +167,7 @@ function showOrderItems(userID) {
             var total = 0;
 
             orderItems.forEach(orderItem => {
-                console.log(orderItem);
+                console.log(orderItem.product_id);
                 getProduct(orderItem.product_id)
                     .then(product => {
                         var image_url = product.product.image;
@@ -180,49 +181,42 @@ function showOrderItems(userID) {
                             <p class="product-name">${orderItem.product_name}</p>
                             <p class="price">$${price}</p>
                             <p class="quantity">Quantity: ${orderItem.quantity}</p>
+                            <form action="javascript:;" onsubmit="deleteOrderItem(${orderItem.id})">
+                                <button class="trash-icon"><i class="fas fa-trash-alt"></i></button>
+                            </form>
                         `;
                         orderItemsDiv.appendChild(itemDiv);
                     });
             });
-            // If the div is hidden, show it. Otherwise, hide it.
-            if (orderItemsDiv.style.display === "none") {
-                orderItemsDiv.style.display = "block";
-            } else {
-                orderItemsDiv.style.display = "none";
-            }
         }
         );
 }
 
-// ================== GET PRODUCT ==================
+// ================== GET/EDIT PRODUCT ==================
 function getProduct(product_id) {
     return fetch('/get_product/' + product_id)
         .then(response => response.json());
 }
 
-/*
-document.querySelector('#show-order-button').addEventListener('click', function (event) {
-    event.stopPropagation();
+function showOrdersInDiv() {
     var ordersDiv = document.querySelector('.orders');
     var orderId = ordersDiv.dataset.orderId;
-    var ordersElement = document.getElementById('userID');
-    var userID = ordersElement.getAttribute('data-user-id');
     showOrderItems(orderId);
-});
-*/
-// =================== update user creadentials ==================
-function updateUserCred(name, email, password) {
-    fetch('/update_user', {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            name: name,
-            email: email,
-            password: password
-        })
-    })
+}
+
+function deleteOrderItem(id) {
+    console.log("order id: ", document.querySelector('.orders').dataset.orderId);
+    console.log("product id for user: ", id);
+    var order = document.querySelector('.orders').dataset.orderId;
+    window.location.href = '/delete_orderItem/'+order+'/'+id;
+}
+
+// ================== order button ===================
+
+// disbale button if cart empty aka money = 0
+function disableOrderButton() {
+    var button = document.getElementById("place-order-button");
+    fetch('/order_size')
         // check if response is OK
         .then(response => {
             if (!response.ok) {
@@ -232,24 +226,40 @@ function updateUserCred(name, email, password) {
         })
         // if OK
         .then(data => {
-            showError('user updated successfully!', true);
-            document.getElementById('user-name').textContent = name; // Display the user's name
+            if (data.LoggedIn == false) {
+                console.log('not logged in');
+                document.getElementById('round-div').textContent = 0;
+            } else {
+                if (data.order_size > 0) {
+                    button.disabled = false;
+                } else {
+                    button.disabled = true;
+                }
+            }
         })
         // Error handling
         .catch(error => {
-            showError(error.message, false);
+            console.log('Error fetching order size: ' + error);
         });
-
+    /*console.log("money: ", orderVariable);
+    if (orderVariable <= 0) {
+        button.disabled = true;
+    } else {
+        button.disabled = false;
+    }*/
 }
-// event lisenter for user credential updating
-document.getElementById('account-cred').addEventListener('submit', function (event) {
-    event.preventDefault(); // Prevent the form from being submitted normally
-    var name = document.getElementById('account-name').value;
-    var email = document.getElementById('account-email').value;
-    var password = document.getElementById('account-password').value;
-    updateUserCred(name, email, password);
-});
 
+// url for payment
+document.getElementById('payment-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    var ordersElement = document.getElementById('orderID');
+    var orderId = ordersElement.getAttribute('data-order-id');
+
+    this.action = '/payment/'+orderId+'/' + document.getElementById('price-input').value;
+    this.submit();
+});
+ 
 // =================== cart notification =====================
 function updateCartNotification() {
     fetch('/order_size')
@@ -280,7 +290,6 @@ function updateCartNotification() {
 }
 
 // =================== update order total =====================
-/*
 function updateOrderTotal() {
     fetch('/order_total')
         .then(response => response.json())
@@ -291,9 +300,10 @@ function updateOrderTotal() {
             else {
                 document.getElementById('total-price').textContent = '$0';
             }
+            document.getElementById('price-input').value = data.order_total; 
         });
 }
-*/
+
 // =================== admin button =====================
 function admin_button_status() {
     fetch('/get_user_role')
@@ -346,5 +356,8 @@ window.onload = function () {
             }
         });
     updateCartNotification();
+    updateOrderTotal();
     admin_button_status();
+    showOrdersInDiv();
+    disableOrderButton();
 };

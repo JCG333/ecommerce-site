@@ -54,3 +54,24 @@ CREATE TABLE order_items (
     FOREIGN KEY (product_id) REFERENCES products(id),
     FOREIGN KEY (order_id) REFERENCES orders(id)
 );
+
+-- Table that stores completed order information
+CREATE TABLE completed_orders (
+    id SERIAL PRIMARY KEY,
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    shipping_country VARCHAR(64) NOT NULL,
+    shipping_address VARCHAR(64) NOT NULL,
+    user_id INTEGER REFERENCES users(id) NOT NULL,
+    the_status BOOLEAN
+);
+
+-- Table that stores completed order item information
+CREATE TABLE completed_order_items (
+    id SERIAL PRIMARY KEY,
+    product_id INTEGER REFERENCES products(id) NOT NULL,
+    order_id INTEGER REFERENCES completed_orders(id) NOT NULL,
+    quantity INTEGER NOT NULL,
+    price INTEGER NOT NULL,
+    FOREIGN KEY (product_id) REFERENCES products(id),
+    FOREIGN KEY (order_id) REFERENCES completed_orders(id)
+);

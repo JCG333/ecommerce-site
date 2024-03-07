@@ -4,9 +4,9 @@
 <head>
     <title>{{user.name}}</title>
     <!-- Link to the CSS file -->
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='CSS/account.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='CSS/cart.css') }}">
     <!-- Link to the JavaScript file -->
-    <script src="{{ url_for('static', filename='JS/account.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='JS/cart.js') }}" defer></script>
     <!-- Icon library -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <!-- other devices -->
@@ -63,7 +63,7 @@
 
                     <a id="account-icon"><i class="fas fa-user"></i></a>
 
-                    <div id="loginDropdown" class="dropdown-content">
+                    <div id="loginDropdown" class="dropdown-content" style="display: none;">
 
                         <form id="loginForm">
                             <label for="email">Email:</label>
@@ -93,46 +93,24 @@
 <!--- >>>>>>> PRODUCT SPECIFIC ELEMENTS <<<<<<< -->
 
 <body>
-    <!------ ACCOUNT CREDENTIALS ------>
-    <div class="account-info">
-        <div id="userID" data-user-id="{{user.id}}"></div>
-        <div id="name-container">
-            <h1>{{user.name}}</h1>
-        </div>
-        <div id="cred-container">
-            <form id="account-cred">
-                <label for="name">Name:</label><br>
-                <input type="text" id="account-name" name="name" placeholder="new name"><br>
-                <label for="email">Email:</label><br>
-                <input type="email" id="account-email" name="email" placeholder="new email"><br>
-                <label for="password">Password:</label><br>
-                <input type="password" id="account-password" name="password" placeholder="New password"><br>
-                <input type="submit" id="update-cred-button" value="Update">
-            </form>
-        </div>
-    </div>
-
+    <div id="userID" data-user-id="{{user.id}}"></div>
     <!------ ORDERS ------>
-    <div id="orders" class="content-section">
-        <div class="order-title">
-            <h2>Your orders:</h2>
+    <div class="orders" id="orderID" data-order-id="{{order.id}}">
+        {% if order %}
+        <div id="order-items">
+            <!-- order items will be added here -->
         </div>
-        {% for order, user in orders %}
-        <div class="order-container">
-            <h3>User: {{ user.name }} - Order ID: {{ order.id }}</h3>
-            <div class="order-details">
-                <p>Order Date: {{ order.order_date }}</p>
-                <p>Shipping: {{ order.shipping_address }}, {{ order.shipping_country }}</p>
-                <p>Products:</p>
-                <ul>
-                    {% for order_item in order.Completed_order_item %}
-                    <li>{{ order_item.product.name }} - {{ order_item.product.price }} (Quantity: {{ order_item.quantity
-                        }})</li>
-                    {% endfor %}
-                </ul>
-            </div>
+        {% else %}
+        <p id="no-results-text">No orders</p>
+        {% endif %}
+        <div class="order-summary">
+            <p id="total-price">Order total: </p>
         </div>
-        {% endfor %}
+
+        <form id="payment-form" method="POST">
+            <input id="price-input" value="" type="hidden">
+            <button id="place-order-button" disabled>Place Order</button>
+        </form>
     </div>
 
     <!---- ERROR CONTAINER ---->

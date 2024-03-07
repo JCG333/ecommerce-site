@@ -158,3 +158,56 @@ class Order_item(db.Model):
     def json(self):
         return {'id': self.id, 'product_name': self.product.name,'product_id': self.product_id, 'quantity': self.quantity, 'order_id': self.order_id}
 
+'''
+Table that stores completed order information
+attributes:
+    order_date: date of the order
+    shipping_address: shipping address of the order
+    user_id: user id of the user
+'''
+class Completed_orders(db.Model):
+    __tablename__ = 'completed_orders'
+    id = db.Column(db.Integer, primary_key=True)
+    order_date = db.Column(db.DateTime, default=datetime.utcnow)
+    shipping_country = db.Column(db.String(64))
+    shipping_address = db.Column(db.String(64))
+    the_status = db.Column(db.Boolean)
+
+    user_id = db.Column(db.Integer, ForeignKey('users.id'))
+
+    user = relationship('User', backref='Completed_orders')
+
+#    def __init__(self, user_id):
+    def __init__(self, shipping_address, shipping_country, user_id, the_status):
+        self.shipping_country = shipping_country
+        self.shipping_address = shipping_address
+        self.user_id = user_id
+        self.the_status = the_status
+    def json(self):
+        return {'id': self.id, 'order_date': self.order_date, 'shipping_country': self.shipping_country, 'shipping_address': self.shipping_address, 'user_name': self.user.name, 'the_status': self.the_status}
+
+'''
+Table that stores the order item information
+attributes:
+    product_id: product id of the product
+    order_id: order id of the order
+    quantity: quantity of the product
+'''
+class Completed_order_item(db.Model):
+    __tablename__ = 'completed_order_items'
+    id = db.Column(db.Integer, primary_key=True)
+    product_id = db.Column(db.Integer, ForeignKey('products.id'))
+    order_id = db.Column(db.Integer, ForeignKey('completed_orders.id'))
+    quantity = db.Column(db.Integer)
+    price = db.Column(db.Integer)
+
+    product = relationship('Product', backref='Completed_order_item')
+    order = relationship('Completed_orders', backref='Completed_order_item')
+
+    def __init__(self, product_id, order_id, quantity, price):
+        self.product_id = product_id
+        self.order_id = order_id
+        self.quantity = quantity
+        self.price = price
+    def json(self):
+        return {'id': self.id, 'product_name': self.product.name,'product_id': self.product_id, 'quantity': self.quantity, 'price': self.price, 'order_id': self.order_id}

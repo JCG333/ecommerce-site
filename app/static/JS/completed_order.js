@@ -155,18 +155,18 @@ function search(event) {
 // event listener for search bar
 document.getElementById('search').addEventListener('keypress', search);
 
-function showOrderItems(userID) {
-    fetch('/all_orders/' + userID) // replace with your API endpoint
+//
+function showOrderItems(orderId) {
+    fetch('/Get_complete_order_items/' + orderId) // replace with your API endpoint
         .then(response => response.json())
         .then(data => {
             var orderItems = data.order_items;
-            console.log(orderItems);
             var orderItemsDiv = document.querySelector('#order-items');
             orderItemsDiv.innerHTML = ''; // clear the div
             var total = 0;
 
             orderItems.forEach(orderItem => {
-                console.log(orderItem);
+                console.log('ooo',orderItem.product_id);
                 getProduct(orderItem.product_id)
                     .then(product => {
                         var image_url = product.product.image;
@@ -184,12 +184,6 @@ function showOrderItems(userID) {
                         orderItemsDiv.appendChild(itemDiv);
                     });
             });
-            // If the div is hidden, show it. Otherwise, hide it.
-            if (orderItemsDiv.style.display === "none") {
-                orderItemsDiv.style.display = "block";
-            } else {
-                orderItemsDiv.style.display = "none";
-            }
         }
         );
 }
@@ -200,56 +194,17 @@ function getProduct(product_id) {
         .then(response => response.json());
 }
 
-/*
-document.querySelector('#show-order-button').addEventListener('click', function (event) {
-    event.stopPropagation();
+function showOrdersInDiv() {
     var ordersDiv = document.querySelector('.orders');
-    var orderId = ordersDiv.dataset.orderId;
-    var ordersElement = document.getElementById('userID');
-    var userID = ordersElement.getAttribute('data-user-id');
+    var url = window.location.pathname;
+    var orderId = url.substring(url.lastIndexOf('/') + 1);
+    console.log('order id here:',orderId,':ending');
     showOrderItems(orderId);
-});
-*/
-// =================== update user creadentials ==================
-function updateUserCred(name, email, password) {
-    fetch('/update_user', {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            name: name,
-            email: email,
-            password: password
-        })
-    })
-        // check if response is OK
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(error => Promise.reject(error));
-            }
-            return response.json();
-        })
-        // if OK
-        .then(data => {
-            showError('user updated successfully!', true);
-            document.getElementById('user-name').textContent = name; // Display the user's name
-        })
-        // Error handling
-        .catch(error => {
-            showError(error.message, false);
-        });
-
 }
-// event lisenter for user credential updating
-document.getElementById('account-cred').addEventListener('submit', function (event) {
-    event.preventDefault(); // Prevent the form from being submitted normally
-    var name = document.getElementById('account-name').value;
-    var email = document.getElementById('account-email').value;
-    var password = document.getElementById('account-password').value;
-    updateUserCred(name, email, password);
-});
 
+// ================== order button ===================
+
+ 
 // =================== cart notification =====================
 function updateCartNotification() {
     fetch('/order_size')
@@ -280,9 +235,10 @@ function updateCartNotification() {
 }
 
 // =================== update order total =====================
-/*
 function updateOrderTotal() {
-    fetch('/order_total')
+    var ordersElement = document.getElementById('orderID');
+    var orderId = ordersElement.getAttribute('data-order-id');
+    fetch('/compledorder_total/' + orderId)
         .then(response => response.json())
         .then(data => {
             console.log(data.order_total);
@@ -291,9 +247,10 @@ function updateOrderTotal() {
             else {
                 document.getElementById('total-price').textContent = '$0';
             }
+            document.getElementById('price-input').value = data.order_total; 
         });
 }
-*/
+
 // =================== admin button =====================
 function admin_button_status() {
     fetch('/get_user_role')
@@ -346,5 +303,7 @@ window.onload = function () {
             }
         });
     updateCartNotification();
+    updateOrderTotal();
     admin_button_status();
+    showOrdersInDiv();
 };

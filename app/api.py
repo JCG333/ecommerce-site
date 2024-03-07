@@ -1,7 +1,7 @@
 import os
 from flask import Flask, abort, flash, redirect, render_template, request, url_for, jsonify, make_response, session
 from os import environ
-from db.schema import Review, db, User, Category, Product, Order, Order_item
+from db.schema import Review, db, User, Category, Product, Order, Order_item, Completed_orders, Completed_order_item
 
 from random import randint
 
@@ -155,11 +155,152 @@ def Specific_Product(id) -> str:
         return "Product not found"
     return render_template("show_product.html", product=product)
 
+''' ========== CART PAGES ========== '''
 '''Return the cart page'''
 @app.route('/cart')
 def Cart():
-    return 'Cart Page'
+    if 'logged_in' not in session:
+        return make_response(jsonify({'message': 'Please log in to view cart'}), 401)
+    user = User.query.filter_by(id=session['user_id']).first()
+    order = Order.query.filter_by(user_id=session['user_id']).first()
+    return render_template("cart.html", user = user, order = order)
 
+'''Delete a cart item'''
+@app.route('/delete_orderItem/<order>/<id>', methods=['GET', 'POST'])
+def delete_orderItem(order, id):
+    item = Order_item.query.filter_by(order_id=order, id=id).first()
+    if item:
+        db.session.delete(item)
+        db.session.commit()
+    return redirect(url_for('Cart'))
+
+''' ========== PAYMENT PAGES =========='''
+'''Calls "Create_CompletedOrder" and if successful returns the payment page'''
+@app.route('/payment/<id>/<price>', methods=['POST'])
+def Payment(id, price):
+    if 'logged_in' not in session:
+        return make_response(jsonify({'message': 'Please log in to view account'}), 401)
+    session['order_id'] = id
+    user = User.query.filter_by(id=session['user_id']).first()
+    order = Order.query.filter_by(user_id=session['user_id']).first()
+    return(Create_CompletedOrder(user, order, price))
+#    return render_template("payment.html", user = user, order = order, orderPrice = price)
+
+'''
+= takes order item from cart and adds to compled order = 
+'''
+@app.route('/create_CompletedOrder/<in_user>/<in_order>/<orderPrice>', methods=['POST'])
+def Create_CompletedOrder(in_user, in_order, orderPrice):
+    try:
+        user_id = session['user_id']
+        TheOrder = Order.query.filter_by(user_id=user_id).first()
+        order_id = TheOrder.id
+        itemsInOrder = Order_item.query.filter_by(order_id=order_id).all()
+        
+        if not itemsInOrder or not TheOrder:
+            return make_response(jsonify({'message': 'Missing order items or user'}), 500)
+        try:
+            #removes uncompleted orders
+            old_Orders = Completed_orders.query.filter_by(user_id=user_id, the_status=False).all()
+            if old_Orders:
+                for everyorder in old_Orders:
+                    old_itemsInOrder = Completed_order_item.query.filter_by(order_id=order_id).all()
+                    db.session.delete(everyorder)
+                    for everyitem in old_itemsInOrder:
+                        db.session.delete(everyitem)
+                db.session.commit()
+        except Exception as e:
+            return make_response(jsonify({'message': 'could not remove old orders'}), 500)
+        
+        new_order = Completed_orders(user_id=user_id, shipping_address=' ', shipping_country=' ', the_status=False)
+        #new_order = Order(user_id=user_id)
+        db.session.add(new_order)
+
+        for orderItem in itemsInOrder:
+            price = Product.query.filter_by(id=orderItem.product_id).first().price
+            order_item = Completed_order_item(product_id=orderItem.product_id, quantity=orderItem.quantity, price=price, order_id=new_order.id)
+            db.session.add(order_item)
+        
+        db.session.commit()
+        order_items = Completed_order_item.query.filter_by(order_id=new_order.id).all()
+
+        total_price = 0
+        for item in order_items:
+            total_price += item.price*item.quantity
+        
+        if str(total_price) == orderPrice:
+            db.session.commit()
+            return render_template("payment.html", user = in_user, prosses_order = new_order, orderPrice = orderPrice)
+        else:
+            '''
+            printing = [
+                {
+                    "id": item.id,
+                    "price": item.price,
+                    # Add more fields as needed
+                }
+                for item in order_items
+            ]
+            '''
+            return make_response(jsonify({'message': 'Could not complete order due to price mismatch, try again'}), 401)
+
+    except Exception as e:
+        return make_response(jsonify({'message': 'Error: ' + str(e)}), 500)
+
+'''add shipping and redirect'''
+@app.route('/add_shipping/<order_id>/<country>/<address>', methods=['POST'])
+def Add_shipping(order_id, country, address):
+    try:
+        TheOrder = Completed_orders.query.filter_by(id=order_id).first()
+        TheOrder.shipping_country = country
+        TheOrder.shipping_address = address
+        return Complete_order(order_id)
+    except Exception as e:
+        return make_response(jsonify({'message': 'Could not add shipping'}), 401)
+
+'''Completes the order page'''
+@app.route('/complete_order/<order_id>', methods=['POST', 'GET'])
+def Complete_order(order_id):
+    if 'logged_in' not in session:
+        return make_response(jsonify({'message': 'Please log in to view cart'}), 401)
+    try: 
+        Completed_orders.query.filter_by(id=order_id).first().the_status = True
+    except Exception as e:
+        return make_response(jsonify({'message': 'Could not complete order, status remain false'}), 401)
+    try:
+        #removes from "cart"
+        user_id = session['user_id']
+        TheOrder = Order.query.filter_by(user_id=user_id).first()
+        itemsInOrder = Order_item.query.filter_by(order_id=order_id).all()
+        db.session.delete(TheOrder)
+        for everyitem in itemsInOrder:
+            db.session.delete(everyitem)
+        db.session.commit()
+    except Exception as e:
+        return make_response(jsonify({'message': 'Could not complete order'}), 401)
+    
+    user = User.query.filter_by(id=session['user_id']).first()
+    return redirect(url_for('Completed_order_page', user_id= user.id, order_id=order_id))
+
+'''Return the completed order page'''
+@app.route('/completed_order_page/<user_id>/<order_id>', methods=['POST', 'GET'])
+def Completed_order_page(user_id,order_id):
+    if 'logged_in' not in session:
+        return make_response(jsonify({'message': 'Please log in to view cart'}), 401)    
+    user = User.query.filter_by(id=session['user_id']).first()
+    order = Completed_orders.query.filter_by(user_id=session['user_id'], id=order_id).first()
+    return render_template("completed_order.html", user = user, order = order)
+
+'''Return complete order items for a specific order'''
+@app.route('/Get_complete_order_items/<int:id>', methods=['GET'])
+def get_complete_order_items(id) -> str:
+    try:
+        order_items = Completed_order_item.query.filter_by(order_id=id).all()
+        return make_response(jsonify({'order_items': [order_item.json() for order_item in order_items]}), 200)
+    except Exception as e:
+        return make_response(jsonify({'message': 'error getting order items', 'error': str(e)}), 500)
+
+'''========================================='''
 '''
 = Return the specific category Page =
 category_name: name of the category
@@ -254,11 +395,34 @@ def register():
 '''Return your account page'''
 @app.route('/myaccount')
 def MyAccount():
+    '''
+    #orders = db.session.query(Order, User).join(User, Order.user_id == User.id).all()
+    #user = User.query.all()
     if 'logged_in' not in session:
         return make_response(jsonify({'message': 'Please log in to view account'}), 401)
-    user = User.query.filter_by(id=session['user_id']).first()
-    order = Order.query.filter_by(user_id=session['user_id']).first()
-    return render_template("account.html", user = user, order = order)  
+    product = Product.query.all()
+    user = User.query.filter_by(id=session['user_id']).all()
+    orders = db.session.query(Order, User).join(User).filter(User.id == session['user_id']).all()
+    #orders = Completed_orders.query.filter_by(user_id=session['user_id']).all()
+    return render_template("account.html", user = user, users = user, orders = orders, products=product)'''
+    orders = db.session.query(Completed_orders, User).join(User, Completed_orders.user_id == User.id).filter(User.id == session['user_id'], Completed_orders.the_status == True).all()
+    product = Product.query.all()
+    users = User.query.all()
+    user = User.query.filter_by(id=session['user_id']).all()
+    if not session.get('logged_in'):
+        return redirect(url_for('Home'))
+    else:
+        return render_template('account.html', users=users, products=product, orders=orders, user=user)
+
+'''    
+    orders = db.session.query(Order, User).join(User, Order.user_id == User.id).all()
+    product = Product.query.all()
+    user = User.query.all()
+    if not session.get('logged_in') or not session.get('admin'):
+        return redirect(url_for('Home'))
+    else:
+        return render_template('admin.html', users=user, products=product, orders=orders)
+'''
 
 '''Return order items for a specific order'''
 @app.route('/order_items/<int:id>', methods=['GET'])
@@ -268,7 +432,16 @@ def get_order_items(id) -> str:
         return make_response(jsonify({'order_items': [order_item.json() for order_item in order_items]}), 200)
     except Exception as e:
         return make_response(jsonify({'message': 'error getting order items', 'error': str(e)}), 500)
-    
+
+'''Return all completed order ids of a user''' 
+@app.route('/all_orders/<int:user_id>', methods=['GET'])
+def get_all_order_items(user_id) -> str:
+    try:
+        order_id = Completed_orders.query.filter_by(user_id=user_id).all()
+        return make_response(jsonify({'orders': [order_id.json() for order_id in order_id]}), 200)
+    except Exception as e:
+        return make_response(jsonify({'message': 'error getting order items', 'error': str(e)}), 500)
+
 '''Return product from product_id'''
 @app.route('/get_product/<int:id>', methods=['GET'])
 def get_product(id) -> str:
@@ -322,6 +495,21 @@ def order_total() -> str:
     except Exception as e:
         return make_response(jsonify({'message': 'error getting order total', 'error': str(e)}), 500)
 
+'''Return order total'''
+@app.route('/compledorder_total/<order_id>', methods=['GET'])
+def compledorder_total(order_id) -> str:
+    try:
+        if 'logged_in' not in session:
+            return make_response(jsonify({'message': 'Please log in to view order total'}), 401)
+        order = Completed_orders.query.filter_by(user_id=session['user_id'], id=order_id).first()
+        if order is None:
+            return make_response(jsonify({'order_total': 0}), 200)
+        order_items = Completed_order_item.query.filter_by(order_id=order.id).all()
+        total = sum(order_item.product.price * order_item.quantity for order_item in order_items)
+        return make_response(jsonify({'order_total': total}), 200)
+    except Exception as e:
+        return make_response(jsonify({'message': 'error getting order total', 'error': str(e)}), 500)
+    
 '''Return the checkout page'''
 @app.route('/checkout')
 def Checkout():
@@ -330,13 +518,101 @@ def Checkout():
 '''Return the admin page'''
 @app.route('/admin_console')
 def Admin():
-    orders = db.session.query(Order, User).join(User, Order.user_id == User.id).all()
+    orders = db.session.query(Completed_orders, User).join(User, Completed_orders.user_id == User.id).all()
     product = Product.query.all()
     user = User.query.all()
     if not session.get('logged_in') or not session.get('admin'):
         return redirect(url_for('Home'))
     else:
         return render_template('admin.html', users=user, products=product, orders=orders)
+
+''' Update the price of a product '''
+@app.route('/update_price/<int:product_id>', methods=['PUT'])
+def update_price(product_id):
+    # Get the new price from the request data
+    data = request.get_json()
+    new_price = data['price']
+
+    # Find the product and update its price
+    product = Product.query.get(product_id)
+    if product:
+        product.price = new_price
+        db.session.commit()
+        return jsonify(success=True), 200
+    else:
+        return jsonify(success=False, error='Product not found'), 404
+
+'''Create a new product and add to the database'''
+@app.route('/create_product', methods=['POST'])
+def create_product():
+    name = request.form.get('product_name')
+    price = request.form.get('product_price')
+    description = request.form.get('product_description')
+    image = request.files.get('product_image')
+    quantity = request.form.get('product_quantity')
+    category_name = request.form.get('product_category')
+
+    # Get the category based on the name
+    category = Category.query.filter_by(category_name=category_name).first()
+
+    if category:
+        category_id = str(category.id)  # Convert category_id to string
+        if image:
+            filename = secure_filename(image.filename)
+            image_path = os.path.abspath(os.path.join('static/images', category_id, filename))
+            os.makedirs(os.path.dirname(image_path), exist_ok=True)
+            image.save(image_path)
+            image_url = os.path.join('images', category_id, filename)
+
+            # Create the Product object after obtaining the image URL
+            product = Product(name=name, price=price, description=description, image=image_url, quantity=quantity, category_id=category_id)
+
+            # Save the Product object to the database
+            db.session.add(product)
+            db.session.commit()
+
+            return jsonify({'success': True})
+        else:
+            # Handle the case where no image is uploaded
+            return jsonify({'success': False, 'error': 'No image uploaded'}), 400
+    else:
+        # Handle the case where the category is not found
+        return jsonify({'success': False, 'error': 'Category not found'}), 400
+
+'''Delete a product from the database'''
+@app.route('/delete_product/<product_id>', methods=['DELETE'])
+def delete_product(product_id):
+    product = Product.query.get(product_id)
+    if product:
+        db.session.delete(product)
+        db.session.commit()
+    return jsonify({'success': True})
+
+'''Update the quantity of a product'''
+@app.route('/update_quantity', methods=['POST'])
+def update_quantity():
+    product_id = request.json.get('product_id')
+    change = int(request.json.get('change'))
+    product = Product.query.get(product_id)
+    if product:
+        # Update the quantity of the product
+        if product.quantity + change < 0:
+            return jsonify({'success': False, 'error': 'Quantity cannot be less than 0'})
+        
+        product.quantity += change
+
+        # Save the changes to the database
+        db.session.commit()    
+    return jsonify({'success': True})
+
+'''Delete a user'''
+@app.route('/delete_order/<id>', methods=['POST'])
+def delete_order(id):
+    order = Completed_orders.query.get(id)
+    if order:
+        db.session.delete(order)
+        db.session.commit()
+    return redirect(url_for('Admin')) 
 
 '''Delete a user'''
 @app.route('/delete_user/<id>', methods=['POST'])

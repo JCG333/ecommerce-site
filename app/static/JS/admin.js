@@ -304,3 +304,156 @@ window.onload = function () {
     admin_button_status();
 
 };
+
+// Add to stock
+document.querySelectorAll('.plus-button').forEach(function(button) {
+    button.addEventListener('click', function() {
+        var productId = this.getAttribute('data-product-id');
+        var quantityElement = this.parentElement.parentElement.querySelector('td:nth-child(3)'); // Get the quantity element
+        fetch('/update_quantity', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({product_id: productId, change: 1}),
+        })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            // Update the quantity on the page
+            var currentQuantity = parseInt(quantityElement.textContent);
+            quantityElement.textContent = currentQuantity + 1;
+        });
+    });
+});
+
+// Remove from stock
+document.querySelectorAll('.minus-button').forEach(function(button) {
+    button.addEventListener('click', function() {
+        var productId = this.getAttribute('data-product-id');
+        var quantityElement = this.parentElement.parentElement.querySelector('td:nth-child(3)'); // Get the quantity element
+        fetch('/update_quantity', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({product_id: productId, change: -1}),
+        })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            // Update the quantity on the page
+            var currentQuantity = parseInt(quantityElement.textContent);
+            if (currentQuantity > 0) { // Ensure quantity doesn't go below 0
+                quantityElement.textContent = currentQuantity - 1;
+            }
+        });
+    });
+});
+
+// Delete product
+document.querySelectorAll('.delete-button').forEach(button => {
+    
+    button.addEventListener('click', function() {
+        const productId = this.dataset.productId;
+        fetch(`/delete_product/${productId}`, {
+            method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Remove the product row from the table
+                const parentElement = this.parentElement.parentElement.parentElement;
+
+                // Remove the parent element
+                parentElement.remove();
+                
+            } else {
+                // Show an error message
+                console.error('Error:', data.error);
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    });
+});
+
+
+// Create new product
+document.getElementById('create_product_form').addEventListener('submit', function(event) {
+    // Prevent the form from submitting normally
+    event.preventDefault();
+
+    // Create a FormData object from the form
+    const formData = new FormData(this);
+
+    // Send the form data to the server
+    fetch('/create_product', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Handle the JSON response
+        if (data.success) {
+            // Clear the form
+            document.getElementById('create_product_form').reset();
+
+            // Optionally, reload the page to update the product list
+            location.reload();
+        } else {
+            // Show an error message
+            console.error('Error:', data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Fetch error:', error);
+        // Handle non-JSON responses here, e.g., display an error message to the user
+    });
+});
+
+
+// New price
+document.querySelectorAll('.update-price-button').forEach(button => {
+    button.addEventListener('click', function() {
+        const productId = this.dataset.productId;
+        const inputElement = this.parentElement.querySelector('.new-price-input');
+        const newPrice = inputElement.value;
+
+        fetch(`/update_price/${productId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ price: newPrice }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update the price in the table
+                const grandparentElement = this.parentElement.parentElement;
+                console.log(grandparentElement);  // Log the grandparent element to the console
+                const priceElement = grandparentElement.querySelector('.product-price');
+                if (priceElement) {
+                    priceElement.textContent = newPrice;
+                } else {
+                    console.error('Element with class "product-price" not found within:', grandparentElement);
+                }
+            } else {
+                // Show an error message
+                console.error('Error:', data.error);
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    });
+});

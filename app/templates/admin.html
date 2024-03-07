@@ -142,15 +142,66 @@
                     <th>Name</th>
                     <th>Price</th>
                     <th>Stock</th>
+                    <th>Actions</th>
                 </tr>
                 <tr>
                     <td>{{ product.name }}</td>
-                    <td>{{ product.price }}</td>
+                    <td class="product-price">{{ product.price }}</td>
                     <td>{{ product.quantity }}</td>
+                    <td>
+                        <button class="plus-button" data-product-id="{{ product.id }}">+</button>
+                        <button class="minus-button" data-product-id="{{ product.id }}">-</button>
+                        <button class="delete-button" data-product-id="{{ product.id }}">Delete</button>
+                        <input type="number" id="price" name="price" step="0.01" min="0" placeholder="new price" class="new-price-input">
+                        <button class="update-price-button" data-product-id="{{ product.id }}">Update Price</button>
+                    </td>
                 </tr>
             </div>
         </table>
         {% endfor %}
+    </section>
+
+<!------ CREATE ITEM SECTION ------>
+    <section id="create_item" class="content-section">
+        <div class="create-title">
+            <h2>Create Item</h2>
+            <form id="create_product_form" enctype="multipart/form-data">
+                <div>
+                    <label for="product_name">Product Name:</label>
+                    <input type="text" id="product_name" name="product_name" required>
+                </div>
+                <div>
+                    <label for="product_price">Product Price:</label>
+                    <input type="number" id="product_price" name="product_price" min="0" step="0.01" required>
+                </div>
+                <div>
+                    <label for="product_image">Product Image:</label>
+                    <input type="file" id="product_image" name="product_image" accept="image/*">
+                </div>
+                <div>
+                    <label for="product_description">Product Description:</label>
+                    <textarea id="product_description" name="product_description"></textarea>
+                </div>
+                <div>
+                    <label for="product_quantity">Product Quantity:</label>
+                    <input type="number" id="product_quantity" name="product_quantity" min="0">
+                </div>
+                <div>
+                    <label for="product_category">Product Category:</label>
+                    <select id="product_category" name="product_category">
+                        <option value="">Select a category</option>
+                        <option value="misc">Misc</option>
+                        <option value="music">Music</option>
+                        <option value="pants">Pants</option>
+                        <option value="shoes">Shoes</option>
+                        <option value="socks">Socks</option>
+                        <option value="t-shirts">T-Shirts</option>
+                        <option value="toys">Toys</option>
+                    </select>
+                </div>
+                <button type="submit">Create Product</button>
+            </form>
+        </div>
     </section>
 
     <!------ ORDERS SECTION ------>
@@ -159,13 +210,20 @@
             <h2>Orders</h2>
         </div>
         {% for order, user in orders %}
-        <div class="order-container">
+        <div class="order-container {% if order.the_status %}green-background{% else %}red-background{% endif %}">
+            <div>
+                <form class="x-button" action="{{ url_for('delete_order', id=order.id) }}" method="POST">
+                    <input type="submit" value="X">
+                </form>
+            </div>
             <h3>User: {{ user.name }} - Order ID: {{ order.id }}</h3>
             <div class="order-details">
                 <p>Order Date: {{ order.order_date }}</p>
+                <p>Status: {{ order.the_status }}</p>
+                <p>Shipping: {{ order.shipping_address }}, {{ order.shipping_country }}</p>
                 <p>Products:</p>
                 <ul>
-                    {% for order_item in order.Order_item %}
+                    {% for order_item in order.Completed_order_item %}
                     <li>{{ order_item.product.name }} - {{ order_item.product.price }} (Quantity: {{ order_item.quantity
                         }})</li>
                     {% endfor %}
