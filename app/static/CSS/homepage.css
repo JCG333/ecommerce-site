@@ -393,7 +393,7 @@ footer p {
     object-fit: contain;
     /* this will ensure that the image is scaled while maintaining its aspect ratio */
     border-radius: 60%;
-    margin-top: 110px;
+    margin-top: 40px;
     margin-left: 20px;
     /* this will make the image a circle */
 }
