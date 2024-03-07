@@ -170,7 +170,7 @@ function showOrderItems(orderId) {
                 getProduct(orderItem.product_id)
                     .then(product => {
                         var image_url = product.product.image;
-                        var price = product.product.price;
+                        var price = orderItem.price;
                         total += price * orderItem.quantity;
                         // do something with image
                         var itemDiv = document.createElement('div');
