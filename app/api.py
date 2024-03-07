@@ -3,6 +3,7 @@ from flask import Flask, abort, flash, redirect, render_template, request, url_f
 from os import environ
 from db.schema import Review, db, User, Category, Product, Order, Order_item, Completed_orders, Completed_order_item
 
+from werkzeug.utils import secure_filename
 from random import randint
 
 
