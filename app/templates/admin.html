@@ -225,7 +225,7 @@
                 <p>Products:</p>
                 <ul>
                     {% for order_item in order.Completed_order_item %}
-                    <li>{{ order_item.product.name }} - {{ order_item.product.price }} (Quantity: {{ order_item.quantity
+                    <li>{{ order_item.product.name }} - {{ order_item.price }} (Quantity: {{ order_item.quantity
                         }})</li>
                     {% endfor %}
                 </ul>
