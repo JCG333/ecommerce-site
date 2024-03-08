@@ -5,6 +5,7 @@ from db.schema import Review, db, User, Category, Product, Order, Order_item, Co
 
 from werkzeug.utils import secure_filename
 from random import randint
+import logging
 
 
 app = Flask(__name__)
@@ -20,6 +21,8 @@ descriptions_clothes = ['This is a great product made of 100% cotton', 'This is 
 descriptions_things = ['This is a great product', 'This is a fantastic product', 'This is a superb product made out of quality goods',
                        'This is an excellent product made out of the finest materials', 'This is a quality product made out of the finest materials',
                        'This is a superb product made out of the finest materials', 'This is a great product made out of the finest materials']
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger()
 
 def create_tables():
     with app.app_context():
@@ -101,14 +104,19 @@ def create_orderItem() -> str:
     data = request.get_json()
     product_id = data.get('product_id')
     quantity = data.get('quantity')
+    quantity = int(quantity)
+    logger.info("QUANTITY %d", quantity)
 
     #check if user is logged in, in current session
     if 'logged_in' not in session:
         return make_response(jsonify({'message': 'Please log in to add to cart'}), 401)
 
     #check if the order exists for logged in user
+    print("Session: ", session)
     user_id = session['user_id']
+    print("User ID: ", user_id)
     order = Order.query.filter_by(user_id=user_id).first()
+    print("Order: ", order)
     try:
         if order is None:
             try:
@@ -119,7 +127,30 @@ def create_orderItem() -> str:
                 order_item = Order_item(product_id=product_id, quantity=quantity, order_id=new_order.id)
                 db.session.add(order_item)
                 db.session.commit()
-                return make_response(jsonify({'message': 'Successfully created order and added item'}), 200)
+                try:
+                    # Fetch the product
+                    product = Product.query.filter_by(id = product_id).first()
+
+                    # Check if the product exists
+                    if product is None:
+                        return make_response(jsonify({'message': 'Product not found'}), 404)
+
+                    # Check if the quantity is a positive integer
+                    if not isinstance(quantity, int) or quantity <= 0:
+                        logger.info("QUANTITY %d", quantity)
+                        return make_response(jsonify({'message': 'Invalid quantity'}), 400)
+
+                    # Update the quantity and commit the changes
+                    product.quantity -= quantity
+                    if product.quantity < 0:
+                        return make_response(jsonify({'message': 'Not enough stock', 'available quantity': product.quantity, 'ordered quantity': quantity}), 400)
+                    db.session.commit()
+
+                    return make_response(jsonify({'message': 'Successfully updated product quantity'}), 200)
+                except Exception as e:
+                    # If there's an error, return an error message
+                    return make_response(jsonify({'message': 'Error updating product quantity', 'error': str(e)}), 500)
+                #return make_response(jsonify({'message': 'Successfully created order and added item'}), 200)
             except Exception as e:
                 return make_response(jsonify({'message': 'error creating order and adding item', 'error': str(e)}), 500)
         else:
@@ -128,7 +159,30 @@ def create_orderItem() -> str:
                 order_item = Order_item(product_id=product_id, quantity=quantity, order_id=order.id)
                 db.session.add(order_item)
                 db.session.commit()
-                return make_response(jsonify({'message': 'Successfully added item to order'}), 200)
+                try:
+                    # Fetch the product
+                    product = Product.query.filter_by(id = product_id).first()
+
+                    # Check if the product exists
+                    if product is None:
+                        return make_response(jsonify({'message': 'Product not found'}), 404)
+
+                    # Check if the quantity is a positive integer
+                    if not isinstance(quantity, int) or quantity <= 0:
+                        logger.info("QUANTITY %d", quantity)
+                        return make_response(jsonify({'message': 'Invalid quantity'}), 400)
+
+                    # Update the quantity and commit the changes
+                    product.quantity -= quantity
+                    if product.quantity < 0:
+                        return make_response(jsonify({'message': 'Not enough stock', 'available quantity': product.quantity, 'ordered quantity': quantity}), 400)
+                    db.session.commit()
+
+                    return make_response(jsonify({'message': 'Successfully updated product quantity'}), 200)
+                except Exception as e:
+                    # If there's an error, return an error message
+                    return make_response(jsonify({'message': 'Error updating product quantity', 'error': str(e)}), 500)
+                #return make_response(jsonify({'message': 'Successfully added item to order'}), 200)
             except Exception as e:
                 return make_response(jsonify({'message': 'error adding item to order', 'error': str(e)}), 500)
     except Exception as e:
@@ -170,6 +224,9 @@ def Cart():
 @app.route('/delete_orderItem/<order>/<id>', methods=['GET', 'POST'])
 def delete_orderItem(order, id):
     item = Order_item.query.filter_by(order_id=order, id=id).first()
+    quantity = item.quantity
+    product = Product.query.filter_by(id=item.product_id).first()
+    product.quantity += quantity
     if item:
         db.session.delete(item)
         db.session.commit()
